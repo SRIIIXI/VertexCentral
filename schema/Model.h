@@ -11,6 +11,8 @@
 #define MAX_SENSORS_PER_ASSET 32
 #define MAX_FEATURES_PER_APPLICATION 1024
 #define MAX_APPLICATION_PERMISSION_PER_ROLE 1024
+#define MAX_SITES 256
+#define MAX_CLUSTERS 256
 
 // Basic data types and structures used in the model
 typedef struct coordinate_t
@@ -246,10 +248,22 @@ typedef struct site_t
     site_type_t site_type; //'I' for indoor, 'O' for outdoor
     unsigned int site_level_count; // 0 for indoor, 1 or more for outdoor
     level_t levels[MAX_LEVELS]; // Array of levels in the site
-    char subcategory_id[65];
+    bool is_master_site;
     bool is_active;
     bool is_system;
 } site_t;
+
+typedef struct cluster_t
+{
+    char cluster_id[65];
+    char cluster_name[65];
+    char description[257];
+    char enterprise_id[65];
+    unsigned int cluster_count;
+    site_t sites[MAX_SITES]; // Array of levels in the site
+    bool is_active;
+    bool is_system;
+} cluster_t;
 
 // Application, rules and feature related structures
 

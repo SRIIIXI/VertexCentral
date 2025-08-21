@@ -684,4 +684,4 @@ db.telemetry_data.createIndex({ "device_id": 1, "data_type": 1, "unix_timestamp"
 // Alarm indexes
 db.alarms.createIndex({ "alarm_id": 1 }, { unique: true });
 db.alarms.createIndex({ "device_id": 1, "unix_timestamp": -1 });
-db.alarms.createIndex({ "alarm_type": 1, "unix
+db.alarms.createIndex({ "alarm_type": 1, "unix_timestamp": -1 });

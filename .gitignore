@@ -160,3 +160,6 @@ macos_build/
 webassembly_build/
 androidbuild/
 webbuild/
+obj/
+bin/
+

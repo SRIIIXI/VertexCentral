@@ -209,10 +209,10 @@ CREATE TABLE assets (
 -- ============================================================================
 -- ASSET_SENSOR_MAPPINGS TABLE
 -- ============================================================================
-CREATE TABLE asset_sensor_mappings (
-    asset_sensor_mapping_id VARCHAR(64) PRIMARY KEY,
+CREATE TABLE asset_device_mappings (
+    asset_device_mapping_id VARCHAR(64) PRIMARY KEY,
     asset_id VARCHAR(64) NOT NULL,
-    sensor_count INTEGER DEFAULT 0,
+    device_count INTEGER DEFAULT 0,
     unix_timestamp_created BIGINT,
     unix_timestamp_updated BIGINT,
     is_active BOOLEAN DEFAULT TRUE,
@@ -226,9 +226,9 @@ CREATE TABLE asset_sensor_mappings (
 -- ============================================================================
 -- ASSET_SENSORS TABLE (Junction table for asset-sensor many-to-many relationship)
 -- ============================================================================
-CREATE TABLE asset_sensors (
+CREATE TABLE asset_devices (
     id SERIAL PRIMARY KEY,
-    asset_sensor_mapping_id VARCHAR(64) NOT NULL,
+    asset_device_mapping_id VARCHAR(64) NOT NULL,
     device_id VARCHAR(64) NOT NULL,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (asset_sensor_mapping_id) REFERENCES asset_sensor_mappings(asset_sensor_mapping_id) ON DELETE CASCADE,

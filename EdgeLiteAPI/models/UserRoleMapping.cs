@@ -5,7 +5,7 @@ using EdgeLiteAPI.Models;
 
 namespace EdgeLiteAPI.Models
 {
-    public class UserRoleMapping
+    public class UserToRoleMapping
     {
         [Required]
         [StringLength(64)]

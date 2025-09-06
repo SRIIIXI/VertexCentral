@@ -9,16 +9,6 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.DependencyInjection; 
 
 
-public class RootHandler
-{
-    public static Task Handle(Microsoft.AspNetCore.Http.HttpContext context)
-    {
-        string message = "Hello from .NET 9 Web Service!";
-        context.Response.ContentType = "text/plain";
-        return context.Response.WriteAsync(message);
-    }
-}
-
 public class RoutingConfiguration
 {
     public static void Configure(IApplicationBuilder app)
@@ -49,6 +39,8 @@ public class Program
         WebHostConfiguration.Configure(hostBuilder);
 
         Microsoft.AspNetCore.Hosting.IWebHost host = hostBuilder.Build();
-        host.Run();
+        host.Start();
+        Console.WriteLine("Web service is running. Press Ctrl+C to shut down.");
+        host.WaitForShutdown();
     }
 }

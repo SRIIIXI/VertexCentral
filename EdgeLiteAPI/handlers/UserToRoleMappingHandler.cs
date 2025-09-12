@@ -10,7 +10,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 
 
-public class RuleHandler
+public class UserToRoleMappingHandler
 {
     public static Task GetAll(Microsoft.AspNetCore.Http.HttpContext context)
     {

@@ -12,7 +12,14 @@ using Microsoft.Extensions.DependencyInjection;
 
 public class NotificationHandler
 {
-    public static Task Handle(Microsoft.AspNetCore.Http.HttpContext context)
+    public static Task GetAll(Microsoft.AspNetCore.Http.HttpContext context)
+    {
+        string message = "Hello from .NET 9 Web Service!";
+        context.Response.ContentType = "text/plain";
+        return context.Response.WriteAsync(message);
+    }
+    
+    public static Task Get(Microsoft.AspNetCore.Http.HttpContext context)
     {
         string message = "Hello from .NET 9 Web Service!";
         context.Response.ContentType = "text/plain";

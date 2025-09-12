@@ -12,7 +12,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 public class RootHandler
 {
-    public static Task Handle(Microsoft.AspNetCore.Http.HttpContext context)
+    public static Task GetRoot(Microsoft.AspNetCore.Http.HttpContext context)
     {
         string message = "Hello from .NET 9 Web Service!";
         context.Response.ContentType = "text/plain";

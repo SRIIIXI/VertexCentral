@@ -11,7 +11,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 public class ClusterLoader : ModelBase
 {
-    ClusterLoader() : base("Clusters")
+    public ClusterLoader() : base("Clusters")
     {
     }
     

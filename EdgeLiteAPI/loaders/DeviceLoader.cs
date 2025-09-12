@@ -11,7 +11,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 public class DeviceLoader : ModelBase    
 {
-    DeviceLoader() : base("Devices")
+    public DeviceLoader() : base("Devices")
     {
     }
     

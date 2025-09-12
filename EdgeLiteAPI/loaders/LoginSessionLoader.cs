@@ -11,7 +11,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 class LoginSessionLoader : ModelBase
 {
-    LoginSessionLoader() : base("LoginSessions")
+    public LoginSessionLoader() : base("LoginSessions")
     {
     }
 

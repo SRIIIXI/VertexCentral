@@ -11,7 +11,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 public class UserToRoleMappingLoader : ModelBase
 {
-    UserToRoleMappingLoader() : base("UserToRoleMappings")
+    public UserToRoleMappingLoader() : base("UserToRoleMappings")
     {
     }
     

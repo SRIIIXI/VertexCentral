@@ -11,7 +11,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 public class DeviceAttributeLoader : ModelBase
 {
-    DeviceAttributeLoader() : base("DeviceAttributes")
+    public DeviceAttributeLoader() : base("DeviceAttributes")
     {
     }
     

@@ -11,7 +11,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 public class ApplicationPermissionLoader : ModelBase
 {
-    ApplicationPermissionLoader() : base("ApplicationPermissions")
+    public ApplicationPermissionLoader() : base("ApplicationPermissions")
     {
     }
     

@@ -11,7 +11,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 public class RuleLoader : ModelBase
 {
-    RuleLoader() : base("Rules")
+    public RuleLoader() : base("Rules")
     {
     }
     

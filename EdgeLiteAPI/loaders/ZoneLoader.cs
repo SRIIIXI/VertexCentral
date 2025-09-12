@@ -11,7 +11,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 public class ZoneLoader : ModelBase
 {
-    ZoneLoader() : base("Zones")
+    public ZoneLoader() : base("Zones")
     {
     }
     

@@ -11,7 +11,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 public class TelemetryLoader : ModelBase
 {
-    TelemetryLoader() : base("Telemetries")
+    public TelemetryLoader() : base("Telemetries")
     {
     }   
 

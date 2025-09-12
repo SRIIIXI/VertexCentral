@@ -11,7 +11,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 public class ApplicationLoader : ModelBase
 {
-    ApplicationLoader() : base("Applications")
+    public ApplicationLoader() : base("Applications")
     {
     }
 

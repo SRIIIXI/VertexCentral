@@ -11,7 +11,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 public class SiteLoader : ModelBase
 {
-    SiteLoader() : base("Sites")
+    public SiteLoader() : base("Sites")
     {
     }
     

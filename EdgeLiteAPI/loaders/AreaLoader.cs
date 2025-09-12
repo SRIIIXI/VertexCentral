@@ -11,7 +11,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 public class AreaLoader : ModelBase
 {
-    AreaLoader() : base("Areas")
+    public AreaLoader() : base("Areas")
     {
     }
     

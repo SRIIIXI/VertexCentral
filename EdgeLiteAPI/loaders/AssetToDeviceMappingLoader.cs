@@ -11,7 +11,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 public class AssetToDeviceMappingLoader : ModelBase
 {
-    AssetToDeviceMappingLoader() : base("AssetToDeviceMappings")
+    public AssetToDeviceMappingLoader() : base("AssetToDeviceMappings")
     {
     }
     

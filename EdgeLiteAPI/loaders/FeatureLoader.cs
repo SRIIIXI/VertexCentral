@@ -11,7 +11,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 public class FeatureLoader : ModelBase
 {
-    FeatureLoader() : base("Features")
+    public FeatureLoader() : base("Features")
     {
     }
     

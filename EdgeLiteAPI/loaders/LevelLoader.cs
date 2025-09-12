@@ -11,7 +11,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 public class LevelLoader : ModelBase
 {
-    LevelLoader() : base("Levels")
+    public LevelLoader() : base("Levels")
     {
     }
 

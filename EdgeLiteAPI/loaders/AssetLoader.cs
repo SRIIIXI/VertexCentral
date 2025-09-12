@@ -11,7 +11,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 public class AssetLoader : ModelBase
 {
-    AssetLoader() : base("Assets")
+    public AssetLoader() : base("Assets")
     {
     }
     

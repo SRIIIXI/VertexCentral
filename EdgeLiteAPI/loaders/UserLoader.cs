@@ -11,7 +11,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 public class UserLoader : ModelBase
 {
-    UserLoader() : base("Users")
+    public UserLoader() : base("Users")
     {
     }
     

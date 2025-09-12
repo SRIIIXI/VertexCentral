@@ -11,7 +11,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 public class AlarmLoader : ModelBase
 {
-    AlarmLoader() : base("Alarms")
+    public AlarmLoader() : base("Alarms")
     {
     }
     public void Initialize(DataInterface? dataInterface)

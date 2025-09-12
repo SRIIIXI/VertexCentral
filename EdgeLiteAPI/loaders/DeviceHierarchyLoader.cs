@@ -11,7 +11,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 public class DeviceHierarchyLoader : ModelBase
 {
-    DeviceHierarchyLoader() : base("DeviceHierarchies")
+    public DeviceHierarchyLoader() : base("DeviceHierarchies")
     {
     }
     

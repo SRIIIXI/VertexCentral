@@ -5,26 +5,32 @@ using Npgsql;
 
 public class DataInterface
 {
-    protected DbConnection? dataConnection = null;
-    protected String? connectionString = null;
+    private DbConnection? dataConnection = null;
+    private String? connectionString = null;
+
+    private List<String> tableNames = new List<String>();
 
     public DataInterface()
     {
+        tableNames.Clear();
     }
 
     public DataInterface(String iConnectionString)
     {
         connectionString = iConnectionString;
+        tableNames.Clear();
     }
 
     public Boolean OpenConnection()
     {
+        tableNames.Clear();
         try
         {
             dataConnection = new NpgsqlConnection(connectionString);
             dataConnection.Open();
             Console.WriteLine($"Connection to edgelite database opened successfully!");
             Console.WriteLine($"Connection object type: {dataConnection.GetType().Name}");
+            LoadTableNames();
             return true;
         }
         catch (Exception ex)
@@ -41,6 +47,38 @@ public class DataInterface
             dataConnection?.Dispose();
         }
         return false;
+    }
+    public void CloseConnection()
+    {
+        if (dataConnection != null)
+        {
+            if (dataConnection.State == ConnectionState.Open)
+            {
+                dataConnection.Close();
+                Console.WriteLine("Connection closed.");
+            }
+            dataConnection.Dispose();
+            dataConnection = null;
+        }
+    }
+
+    void LoadTableNames()
+    {
+        tableNames.Clear();
+        if (dataConnection == null || dataConnection.State != ConnectionState.Open)
+            throw new InvalidOperationException("Data connection is not open.");
+
+        using (var command = dataConnection.CreateCommand())
+        {
+            command.CommandText = "SELECT table_name FROM information_schema.tables WHERE table_schema='public'";
+            using (var reader = command.ExecuteReader())
+            {
+                while (reader.Read())
+                {
+                    tableNames.Add(reader.GetString(0));
+                }
+            }
+        }
     }
 
     Boolean CreateTable(String tableName, String createTableSql)

@@ -11,7 +11,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 public class EnterpriseLoader : ModelBase
 {
-    EnterpriseLoader() : base("Enterprises")
+    public EnterpriseLoader() : base("Enterprises")
     {
     }
     

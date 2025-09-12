@@ -11,7 +11,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 public class NotificationLoader : ModelBase
 {
-    NotificationLoader() : base("Notifications")
+    public NotificationLoader() : base("Notifications")
     {
     }
     

@@ -11,7 +11,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 public class RoleLoader : ModelBase
 {
-    RoleLoader() : base("Roles")
+    public RoleLoader() : base("Roles")
     {
     }
     

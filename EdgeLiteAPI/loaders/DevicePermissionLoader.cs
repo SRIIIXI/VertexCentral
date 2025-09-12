@@ -11,7 +11,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 public class DevicePermissionLoader : ModelBase
 {
-    DevicePermissionLoader() : base("DevicePermissions")
+    public DevicePermissionLoader() : base("DevicePermissions")
     {
     }
     

@@ -9,7 +9,6 @@ using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 
-
 public class AlarmHandler
 {
     public static Task GetAll(Microsoft.AspNetCore.Http.HttpContext context)
@@ -39,7 +38,7 @@ public class AlarmHandler
         context.Response.ContentType = "text/plain";
         return context.Response.WriteAsync(message);
     }
-    
+
     public static Task Delete(Microsoft.AspNetCore.Http.HttpContext context)
     {
         string message = "Hello from .NET 9 Web Service!";

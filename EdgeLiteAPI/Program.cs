@@ -8,18 +8,119 @@ using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using EdgeLiteAPI.Models;
+using System.Data.Common;
+using Npgsql;
 
 public class Program
 {
+    static private DataInterface? dataInterface = null;
+    static private AlarmLoader? alarmLoader = null;      
+    static  private ApplicationLoader? applicationLoader = null;
+    static private ApplicationPermissionLoader? applicationPermissionLoader = null;
+    static private AreaLoader? areaLoader = null;
+    static private AssetLoader? assetLoader = null;
+    static private AssetToDeviceMappingLoader? assetToDeviceMappingLoader = null;
+    static private ClusterLoader? clusterLoader = null;
+    static private DeviceAttributeLoader? deviceAttributeLoader = null;
+    static private DeviceLoader? deviceLoader = null;
+    static private DeviceHierarchyLoader? deviceHierarchyLoader = null;
+    static private DevicePermissionLoader? devicePermissionLoader = null;
+    static private EnterpriseLoader? enterpriseLoader = null;
+    static private FeatureLoader? featureLoader = null;
+    static private LevelLoader? levelLoader = null;
+    static private LoginSessionLoader? loginSessionLoader = null;
+    static private NotificationLoader? notificationLoader = null;
+    static private RoleLoader? roleLoader = null;
+    static private RuleLoader? ruleLoader = null;
+    static private SiteLoader? siteLoader = null;
+    static private TelemetryLoader? telemetryLoader = null;
+    static private UserLoader? userLoader = null;
+    static private UserToRoleMappingLoader? userToRoleMappingLoader = null;
+    static private ZoneLoader? zoneLoader = null; 
+
     public static void Main(string[] args)
     {
         Microsoft.AspNetCore.Hosting.IWebHostBuilder hostBuilder = Microsoft.AspNetCore.WebHost.CreateDefaultBuilder(args);
+
         WebHostConfiguration.Configure(hostBuilder);
 
         Microsoft.AspNetCore.Hosting.IWebHost host = hostBuilder.Build();
+
+        // Open the database connection
+        string connectionString = "Host=localhost;Username=edgelite;Password=Edge#1974;Database=edgelite";
+
+        dataInterface = new DataInterface(connectionString);
+
+        if (dataInterface.OpenConnection())
+        {
+            Console.WriteLine("Database connection established.");
+        }
+        else
+        {
+            Console.WriteLine("Failed to establish database connection.");
+            return; // Exit if the database connection cannot be established
+        }
+
         host.Start();
         Console.WriteLine("Web service is running. Press Ctrl+C to shut down.");
         host.WaitForShutdown();
+    }
+
+    private static void Initiale()
+    {
+        if (dataInterface == null)
+        {
+            Console.WriteLine("DataInterface is not initialized.");
+            return;
+        }
+
+        alarmLoader = new AlarmLoader();
+        applicationLoader = new ApplicationLoader();
+        applicationPermissionLoader = new ApplicationPermissionLoader();
+        areaLoader = new AreaLoader();
+        assetLoader = new AssetLoader();
+        assetToDeviceMappingLoader = new AssetToDeviceMappingLoader();
+        clusterLoader = new ClusterLoader();
+        deviceAttributeLoader = new DeviceAttributeLoader();
+        deviceLoader = new DeviceLoader();
+        deviceHierarchyLoader = new DeviceHierarchyLoader();
+        devicePermissionLoader = new DevicePermissionLoader();
+        enterpriseLoader = new EnterpriseLoader();
+        featureLoader = new FeatureLoader();
+        levelLoader = new LevelLoader();
+        loginSessionLoader = new LoginSessionLoader();
+        notificationLoader = new NotificationLoader();
+        roleLoader = new RoleLoader();
+        ruleLoader = new RuleLoader();
+        siteLoader = new SiteLoader();
+        telemetryLoader = new TelemetryLoader();
+        userLoader = new UserLoader();
+        userToRoleMappingLoader = new UserToRoleMappingLoader();
+        zoneLoader = new ZoneLoader();
+
+        alarmLoader.Initialize(dataInterface);
+        applicationLoader.Initialize(dataInterface);
+        applicationPermissionLoader.Initialize(dataInterface);
+        areaLoader.Initialize(dataInterface);
+        assetLoader.Initialize(dataInterface);
+        assetToDeviceMappingLoader.Initialize(dataInterface);
+        clusterLoader.Initialize(dataInterface);
+        deviceAttributeLoader.Initialize(dataInterface);
+        deviceLoader.Initialize(dataInterface);
+        deviceHierarchyLoader.Initialize(dataInterface);
+        devicePermissionLoader.Initialize(dataInterface);
+        enterpriseLoader.Initialize(dataInterface);
+        featureLoader.Initialize(dataInterface);
+        levelLoader.Initialize(dataInterface);
+        loginSessionLoader.Initialize(dataInterface);
+        notificationLoader.Initialize(dataInterface);
+        roleLoader.Initialize(dataInterface);
+        ruleLoader.Initialize(dataInterface);
+        siteLoader.Initialize(dataInterface);
+        telemetryLoader.Initialize(dataInterface);
+        userLoader.Initialize(dataInterface);
+        userToRoleMappingLoader.Initialize(dataInterface);
+        zoneLoader.Initialize(dataInterface);
     }
 }
 

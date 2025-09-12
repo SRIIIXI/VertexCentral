@@ -9,7 +9,6 @@ using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 
-
 public class ApplicationHandler
 {
     public static Task GetAll(Microsoft.AspNetCore.Http.HttpContext context)
@@ -25,7 +24,7 @@ public class ApplicationHandler
         context.Response.ContentType = "text/plain";
         return context.Response.WriteAsync(message);
     }
-    
+
     public static Task Put(Microsoft.AspNetCore.Http.HttpContext context)
     {
         string message = "Hello from .NET 9 Web Service!";
@@ -39,7 +38,7 @@ public class ApplicationHandler
         context.Response.ContentType = "text/plain";
         return context.Response.WriteAsync(message);
     }
-    
+
     public static Task Delete(Microsoft.AspNetCore.Http.HttpContext context)
     {
         string message = "Hello from .NET 9 Web Service!";

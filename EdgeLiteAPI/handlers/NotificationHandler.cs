@@ -7,8 +7,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.DependencyInjection; 
-
+using Microsoft.Extensions.DependencyInjection;
 
 public class NotificationHandler
 {
@@ -18,7 +17,7 @@ public class NotificationHandler
         context.Response.ContentType = "text/plain";
         return context.Response.WriteAsync(message);
     }
-    
+
     public static Task Get(Microsoft.AspNetCore.Http.HttpContext context)
     {
         string message = "Hello from .NET 9 Web Service!";

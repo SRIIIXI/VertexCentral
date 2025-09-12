@@ -9,7 +9,6 @@ using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.DependencyInjection; 
 
-
 public class RootHandler
 {
     public static Task GetRoot(Microsoft.AspNetCore.Http.HttpContext context)

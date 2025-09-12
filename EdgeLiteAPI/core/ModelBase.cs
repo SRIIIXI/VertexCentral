@@ -6,9 +6,11 @@ public abstract class ModelBase
 {
     public DataInterface? connection = null;
     public ModelBase? selfReference = null;
+    private String tableName = String.Empty;
 
-    public ModelBase()
+    public ModelBase(String tableName)
     {
+        this.tableName = tableName;
     }
     
     public abstract Boolean Insert<T>(T item);

@@ -9,7 +9,7 @@ function Login() {
   const handleSubmit = (e) => {
     e.preventDefault();
     // TODO: Add actual auth logic here
-    navigate('/dashboard-sa'); // Navigate to System Admin dashboard
+    navigate('/main-window'); // Navigate to System Admin dashboard
   };
 
   return (

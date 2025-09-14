@@ -4,7 +4,7 @@ import './DashboardSA.css';
 function DashboardSA() {
   return (
     <div className="DashboardSA">
-      <h1>System Administrator Dashboard</h1>
+      <h1>System administrator dashboard</h1>
       {/* Add widgets, controls, system status here */}
     </div>
   );

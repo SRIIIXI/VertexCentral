@@ -3,10 +3,14 @@ import ReactDOM from 'react-dom/client';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import reportWebVitals from './reportWebVitals';
 import './index.css';
+
 import App from './App';
 import Login from './Login';
-import DashboardSA from './DashboardSA';
+import MainWindow from './MainWindow';
 import ForgotPassword from './ForgotPassword';
+import DashboardSA from './DashboardSA';
+import SideBar from './SideBar';
+import Header from './Header';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
@@ -14,8 +18,11 @@ root.render(
     <Routes>
       <Route path="/" element={<App />} />
       <Route path="/login" element={<Login />} />
-      <Route path="/dashboard-sa" element={<DashboardSA />} />
+      <Route path="/main-window" element={<MainWindow />} />
       <Route path="/forgot-password" element={<ForgotPassword />} />
+      <Route path="/dashboard-sa" element={<DashboardSA />} />
+      <Route path="/side-bar" element={<SideBar />} />
+      <Route path="/header" element={<Header />} />
     </Routes>
   </BrowserRouter>
 );

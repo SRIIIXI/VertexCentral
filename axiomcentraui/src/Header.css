@@ -1,0 +1,42 @@
+.Header {
+  height: 64px;
+  background-color: #1c1c1c;
+  border-bottom: 1px solid #333;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 1rem;
+  color: #fff;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+.Header-left {
+  display: flex;
+  align-items: center;
+}
+
+.Header-logo {
+  height: 40px;
+  margin-right: 0.75rem;
+}
+
+.Header-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+.Header-right {
+  text-align: right;
+}
+
+.User-name {
+  display: block;
+  font-size: 0.95rem;
+}
+
+.User-role {
+  font-size: 0.8rem;
+  color: #aaa;
+}
+

@@ -1,0 +1,39 @@
+.Sidebar {
+  width: 280px;
+  background-color: #1a1a1a;
+  padding: 1.5rem 1rem;
+  border-right: 1px solid #444;
+  height: 100%;
+}
+
+.Sidebar-menu {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.Sidebar-item {
+  padding: 0.75rem 1rem;
+  margin-bottom: 0.5rem;
+  font-size: 1rem;
+  color: #ccc;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.Sidebar-item:hover {
+  background-color: #2a2a2a;
+  color: #fff;
+}
+
+.Sidebar-item.active {
+  background-color: #0078d4;
+  color: #fff;
+}
+
+.Sidebar-separator {
+  border: none;
+  border-top: 1px solid #444;
+  margin: 1rem 0;
+}

@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import './SideBar.css';
 
-function SideBar() {
-  const [activeItem, setActiveItem] = useState('Overview');
+function SideBar({ activeItem, setActiveItem }) {
 
   const handleClick = (label) => {
     setActiveItem(label);
+    console.log(label)
   };
 
   return (

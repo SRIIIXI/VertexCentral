@@ -11,6 +11,9 @@ import ForgotPassword from './ForgotPassword';
 import DashboardSA from './DashboardSA';
 import SideBar from './SideBar';
 import Header from './Header';
+import Devices from './Devices';
+import Rules from './Rules';
+// ...import other modules
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
@@ -23,6 +26,8 @@ root.render(
       <Route path="/dashboard-sa" element={<DashboardSA />} />
       <Route path="/side-bar" element={<SideBar />} />
       <Route path="/header" element={<Header />} />
+      <Route path="/devices" element={<Devices />} />
+      <Route path="/rules" element={<Rules />} />
     </Routes>
   </BrowserRouter>
 );

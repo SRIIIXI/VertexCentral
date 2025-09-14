@@ -35,7 +35,7 @@ function SideBar() {
         <hr className="Sidebar-separator" />
 
         {/* Logic */}
-        {['Applications', 'Rules'].map(label => (
+        {['Applications', 'Features','Rules'].map(label => (
           <li
             key={label}
             className={`Sidebar-item ${activeItem === label ? 'active' : ''}`}

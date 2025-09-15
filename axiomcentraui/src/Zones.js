@@ -10,6 +10,9 @@ function Zones() {
   const [panelMode, setPanelMode] = useState('add'); // or 'edit'
   const [selectedZone, setSelectedZone] = useState(null);
 
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 5;
+
   const [zones] = useState([
     {
       id: 'Z001',
@@ -32,6 +35,27 @@ function Zones() {
       cluster: 'Cluster 1',
       access: 'Monitored',
     },
+     {
+      id: 'Z004',
+      name: 'Billing Counter',
+      site: 'Site A',
+      cluster: 'Cluster 1',
+      access: 'Restricted',
+    },
+    {
+      id: 'Z005',
+      name: 'Operation Theatre',
+      site: 'Site B',
+      cluster: 'Cluster 2',
+      access: 'Forbidden',
+    },
+    {
+      id: 'Z006',
+      name: 'Boiler Room',
+      site: 'Site C',
+      cluster: 'Cluster 1',
+      access: 'Monitored',
+    }, 
   ]);
 
   const toggleSelectAll = (e) => {
@@ -53,6 +77,11 @@ function Zones() {
     // TODO: Filter zones based on searchTerm
   };
 
+    const paginatedZones = zones.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
+  
   return (
     <div className="Zones">
       <div className="TopBar">
@@ -107,7 +136,8 @@ function Zones() {
           </tr>
         </thead>
         <tbody>
-          {zones.map((zone) => (
+
+          {/* {zones.map((zone) => (
             <tr key={zone.id}>
               <td>
                 <input
@@ -132,11 +162,60 @@ function Zones() {
                 <button className="IconButton">🗑️</button>
               </td>
             </tr>
+          ))} */}
+
+            {paginatedZones.map((zone) => (
+            <tr key={zone.id}>
+              <td>
+                <input
+                  type="checkbox"
+                  checked={selectedZoneIds.includes(zone.id)}
+                  onChange={() => toggleSelectRow(zone.id)}
+                />
+              </td>
+              <td>{zone.id}</td>
+              <td>{zone.name}</td>
+              <td>{zone.site}</td>
+              <td>{zone.cluster}</td>
+              <td>{zone.access}</td>
+              <td>
+                <button
+                  className="IconButton"
+                  onClick={() => {
+                    setPanelMode('edit');
+                    setSelectedZone(zone);
+                    setPanelOpen(true);
+                  }}
+                >
+                  ✏️
+                </button>
+                <button className="IconButton">🗑️</button>
+              </td>
+            </tr>
           ))}
+          
         </tbody>
       </table>
 
-      <div className="PaginationBar">Pagination controls here</div>
+      <div className="PaginationBar">
+        <button
+          className="PageButton"
+          disabled={currentPage === 1}
+          onClick={() => setCurrentPage(currentPage - 1)}
+        >
+          ◀ Prev
+        </button>
+
+        <span className="PageInfo">Page {currentPage}</span>
+
+        <button
+          className="PageButton"
+          disabled={currentPage * itemsPerPage >= zones.length}
+          onClick={() => setCurrentPage(currentPage + 1)}
+        >
+          Next ▶
+        </button>
+      </div>
 
     {isPanelOpen && (
       <div className="SlidePanel">

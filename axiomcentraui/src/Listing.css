@@ -95,3 +95,30 @@
   z-index: 1000;
   transition: transform 0.3s ease;
 }
+
+.PaginationBar {
+  margin-top: 1rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+  color: #ccc;
+}
+
+.PageButton {
+  padding: 0.4rem 0.8rem;
+  background-color: #333;
+  color: #eee;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.PageButton:disabled {
+  background-color: #555;
+  cursor: not-allowed;
+}
+
+.PageInfo {
+  font-size: 0.9rem;
+}

@@ -8,11 +8,33 @@ import App from './App';
 import Login from './Login';
 import MainWindow from './MainWindow';
 import ForgotPassword from './ForgotPassword';
-import DashboardSA from './DashboardSA';
 import SideBar from './SideBar';
 import Header from './Header';
+
+import DashboardSA from './DashboardSA';
+import DashboardTA from './DashboardTA';
+import DashboardGuest from './DashboardGuest';
+import DashboardAgent from './DashboardAgent';
+
 import Devices from './Devices';
+import Enterprises from './Enterprises';
+import Clusters from './Clusters';
+import Sites from './Sites';
+import Zones from './Zones';
+import Assets from './Assets';  
+
+import Applications from './Applications'
+import Features from './Features';
 import Rules from './Rules';
+
+import Roles from './Roles';
+import Users from './Users';
+import Permissions from './Permissions';
+
+import Settings from './Settings';  
+import SessionLogs from './SessionLogs';
+
+
 // ...import other modules
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
@@ -23,11 +45,32 @@ root.render(
       <Route path="/login" element={<Login />} />
       <Route path="/main-window" element={<MainWindow />} />
       <Route path="/forgot-password" element={<ForgotPassword />} />
-      <Route path="/dashboard-sa" element={<DashboardSA />} />
       <Route path="/side-bar" element={<SideBar />} />
       <Route path="/header" element={<Header />} />
+
+      <Route path="/dashboard-sa" element={<DashboardSA />} />
+      <Route path="/dashboard-ta" element={<DashboardTA />} />
+      <Route path="/dashboard-guest" element={<DashboardGuest />} />
+      <Route path="/dashboard-agent" element={<DashboardAgent />} />
+
       <Route path="/devices" element={<Devices />} />
+      <Route path="/enterprises" element={<Enterprises />} />
+      <Route path="/clusters" element={<Clusters />} />
+      <Route path="/sites" element={<Sites />} />
+      <Route path="/zones" element={<Zones />} />
+      <Route path="/assets" element={<Assets />} />
+
+      <Route path="/applications" element={<Applications />} />
+      <Route path="/features" element={<Features />} />
       <Route path="/rules" element={<Rules />} />
+
+      <Route path="/roles" element={<Roles />} />
+      <Route path="/users" element={<Users />} />
+      <Route path="/permissions" element={<Permissions />} />
+
+      <Route path="/settings" element={<Settings />} />
+      <Route path="/session-logs" element={<SessionLogs />} />
+      {/* Add other routes as needed */}
     </Routes>
   </BrowserRouter>
 );

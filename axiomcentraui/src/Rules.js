@@ -1,5 +1,5 @@
 import React from 'react';
-import './Rules.css';
+import './Listing.css';
 
 function Rules() {
   return (

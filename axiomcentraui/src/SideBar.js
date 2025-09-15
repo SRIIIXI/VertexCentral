@@ -61,7 +61,7 @@ function SideBar({ activeItem, setActiveItem }) {
         <hr className="Sidebar-separator" />
 
         {/* Settings */}
-        {['Settings'].map(label => (
+        {['Settings','Session Logs'].map(label => (
           <li
             key={label}
             className={`Sidebar-item ${activeItem === label ? 'active' : ''}`}

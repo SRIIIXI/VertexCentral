@@ -1,14 +1,14 @@
 import React from 'react';
 import './Listing.css';
 
-function Devices() {
+function Features() {
   return (
-    <div className="Devices">
-      <h1>Devices</h1>
+    <div className="Features">
+      <h1>Features</h1>
       {/* Add widgets, controls, system status here */}
     </div>
   );
 }
 
-export default Devices;
+export default Features;
 

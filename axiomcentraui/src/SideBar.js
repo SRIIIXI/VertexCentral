@@ -1,7 +1,11 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+
 import './SideBar.css';
 
 function SideBar({ activeItem, setActiveItem }) {
+
+  const navigate = useNavigate();
 
   const handleClick = (label) => {
     setActiveItem(label);
@@ -78,7 +82,7 @@ function SideBar({ activeItem, setActiveItem }) {
           <li
             key={label}
             className={`Sidebar-item ${activeItem === label ? 'active' : ''}`}
-            onClick={() => handleClick(label)}
+            onClick={() => navigate('/login')}
           >
             {label}
           </li>

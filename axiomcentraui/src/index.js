@@ -23,6 +23,13 @@ import Sites from './Sites';
 import Zones from './Zones';
 import Assets from './Assets';  
 
+import DeviceForm from './DeviceForm';
+import EnterpriseForm from './EnterpriseForm';
+import ClusterForm from './ClusterForm';
+import SiteForm from './SiteForm';
+import ZoneForm from './ZoneForm';
+import AssetForm from './AssetForm';  
+
 import Applications from './Applications'
 import Features from './Features';
 import Rules from './Rules';
@@ -59,6 +66,9 @@ root.render(
       <Route path="/sites" element={<Sites />} />
       <Route path="/zones" element={<Zones />} />
       <Route path="/assets" element={<Assets />} />
+
+      <Route path="/zone-form" element={<ZoneForm />} />
+
 
       <Route path="/applications" element={<Applications />} />
       <Route path="/features" element={<Features />} />

@@ -1,2 +1,1 @@
-# The Management System for Axiom (Autonomous eXchange for Industrial Operations and Monitoring)
-HTTP REST API for IoT based Edge Management System
+# The Management System for Vertex (Versatile Exchane for Real time EXecution)

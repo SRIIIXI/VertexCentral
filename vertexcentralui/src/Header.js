@@ -7,7 +7,7 @@ function Header() {
     <div className="Header">
       <div className="Header-left">
         <img src={axiomLogo} alt="Axiom Logo" className="Header-logo" />
-        <span className="Header-title">Axiom Central</span>
+        <span className="Header-title">Vertex Central</span>
       </div>
       <div className="Header-right">
         <span className="User-name">System Admin</span>

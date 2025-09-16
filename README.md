@@ -1,1 +1,1 @@
-# The Management System for Vertex (Versatile Exchane for Real time EXecution)
+# The Management System for Vertex (Versatile Exchange for Real Time EXecution)

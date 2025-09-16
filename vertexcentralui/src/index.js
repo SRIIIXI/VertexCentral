@@ -10,6 +10,9 @@ import MainWindow from './MainWindow';
 import ForgotPassword from './ForgotPassword';
 import SideBar from './SideBar';
 import Header from './Header';
+import PaginationBar from './PaginationBar';
+import TopBar from './TopBar';
+import SlidePanel from './SlidePanel';
 
 import DashboardSA from './DashboardSA';
 import DashboardTA from './DashboardTA';
@@ -54,6 +57,9 @@ root.render(
       <Route path="/forgot-password" element={<ForgotPassword />} />
       <Route path="/side-bar" element={<SideBar />} />
       <Route path="/header" element={<Header />} />
+      <Route path="/pagination-bar" element={<PaginationBar />} /> 
+      <Route path="/top-bar" element={<TopBar />} />
+      <Route path="/slide-panel" element={<SlidePanel />} />
 
       <Route path="/dashboard-sa" element={<DashboardSA />} />
       <Route path="/dashboard-ta" element={<DashboardTA />} />

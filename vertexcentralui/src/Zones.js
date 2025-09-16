@@ -1,6 +1,9 @@
 import React, { useState } from 'react';
 import './Listing.css';
 import ZoneForm from './ZoneForm';
+import PaginationBar from './PaginationBar';
+import TopBar from './TopBar';
+import SlidePanel from './SlidePanel';
 
 function Zones() {
   const [selectedZoneIds, setSelectedZoneIds] = useState([]);
@@ -13,7 +16,7 @@ function Zones() {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5;
 
-  const [zones] = useState([
+  const [zones, setZones] = useState([
     {
       id: 'Z001',
       name: 'Billing Counter',
@@ -81,41 +84,36 @@ function Zones() {
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage
   );
+
+    function handleBulkDelete() {
+    const confirmed = window.confirm(`Delete ${selectedZoneIds.length} selected zones?`);
+    if (!confirmed) return;
+
+    const remaining = zones.filter(zone => !selectedZoneIds.includes(zone.id));
+    setZones(remaining);
+    setSelectedZoneIds([]);
+  }
   
   return (
     <div className="Zones">
-      <div className="TopBar">
-        <div className="TopBar-left">
-          <input
-            type="text"
-            placeholder="Search zones..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="SearchInput"
-          />
-          <button className="TopBarButton" onClick={handleSearch}>Search</button>
-        </div>
 
-        <div className="TopBar-right">
-          <button className="TopBarButton"
-                        onClick={() => {
-              setPanelMode('add');
-              setSelectedZone(null);
-              setPanelOpen(true);
-              console.log('Add Zone Cliked');
-            }}
-          >Add</button>
+    <TopBar
+      entity="Zone"
+      searchTerm={searchTerm}
+      onSearchChange={setSearchTerm}
+      onSearchSubmit={() => console.log('Search:', searchTerm)}
+      onAdd={() => {
+        setPanelMode('add');
+        setSelectedZone(null);
+        setPanelOpen(true);
+      }}
+      onDelete={handleBulkDelete}
+      showAdd={true}
+      showDelete={true}
+      showExport={false}
+      showImport={false}
 
-          <button
-            className="TopBarButton"
-            disabled={selectedZoneIds.length === 0}
-          >
-            Delete
-          </button>
-          <button className="TopBarButton">Import</button>
-          <button className="TopBarButton">Export</button>
-        </div>
-      </div>
+    />
 
       <table className="ListingTable">
         <thead>
@@ -137,103 +135,67 @@ function Zones() {
         </thead>
         <tbody>
 
-          {/* {zones.map((zone) => (
-            <tr key={zone.id}>
-              <td>
-                <input
-                  type="checkbox"
-                  checked={selectedZoneIds.includes(zone.id)}
-                  onChange={() => toggleSelectRow(zone.id)}
-                />
-              </td>
-              <td>{zone.id}</td>
-              <td>{zone.name}</td>
-              <td>{zone.site}</td>
-              <td>{zone.cluster}</td>
-              <td>{zone.access}</td>
-              <td>
-                <button className="IconButton"
+          {paginatedZones.map((zone) => (
+          <tr key={zone.id}>
+            <td>
+              <input
+                type="checkbox"
+                checked={selectedZoneIds.includes(zone.id)}
+                onChange={() => toggleSelectRow(zone.id)}
+              />
+            </td>
+            <td>{zone.id}</td>
+            <td>{zone.name}</td>
+            <td>{zone.site}</td>
+            <td>{zone.cluster}</td>
+            <td>{zone.access}</td>
+            <td>
+              <button
+                className="IconButton"
                 onClick={() => {
-                setPanelMode('edit');
-                setSelectedZone(zone);
-                setPanelOpen(true);
+                  setPanelMode('edit');
+                  setSelectedZone(zone);
+                  setPanelOpen(true);
                 }}
-                >✏️</button>
-                <button className="IconButton">🗑️</button>
-              </td>
-            </tr>
-          ))} */}
-
-            {paginatedZones.map((zone) => (
-            <tr key={zone.id}>
-              <td>
-                <input
-                  type="checkbox"
-                  checked={selectedZoneIds.includes(zone.id)}
-                  onChange={() => toggleSelectRow(zone.id)}
-                />
-              </td>
-              <td>{zone.id}</td>
-              <td>{zone.name}</td>
-              <td>{zone.site}</td>
-              <td>{zone.cluster}</td>
-              <td>{zone.access}</td>
-              <td>
-                <button
-                  className="IconButton"
-                  onClick={() => {
-                    setPanelMode('edit');
-                    setSelectedZone(zone);
-                    setPanelOpen(true);
-                  }}
-                >
-                  ✏️
-                </button>
-                <button className="IconButton">🗑️</button>
-              </td>
-            </tr>
+              >
+                ✏️
+              </button>
+              <button className="IconButton">🗑️</button>
+            </td>
+          </tr>
           ))}
           
         </tbody>
       </table>
 
-      <div className="PaginationBar">
-        <button
-          className="PageButton"
-          disabled={currentPage === 1}
-          onClick={() => setCurrentPage(currentPage - 1)}
-        >
-          ◀ Prev
-        </button>
-
-        <span className="PageInfo">Page {currentPage}</span>
-
-        <button
-          className="PageButton"
-          disabled={currentPage * itemsPerPage >= zones.length}
-          onClick={() => setCurrentPage(currentPage + 1)}
-        >
-          Next ▶
-        </button>
-      </div>
+    <PaginationBar
+      currentPage={currentPage}
+      totalItems={zones.length}
+      itemsPerPage={itemsPerPage}
+      onPageChange={setCurrentPage}
+    />
 
     {isPanelOpen && (
-      <div className="SlidePanel">
+      <SlidePanel onClose={() => {
+        setPanelOpen(false);
+        setSelectedZone(null);
+      }}>
         <ZoneForm
           mode={panelMode}
           data={selectedZone}
           onSave={(newZone) => {
             console.log('Saved zone:', newZone);
             setPanelOpen(false);
-            setSelectedZone(null); // optional: reset after save
+            setSelectedZone(null);
           }}
           onCancel={() => {
-            setSelectedZone(null); // ✅ this line
-            setPanelOpen(false);   // ✅ and this line
-          }}        
-      />
-      </div>
+            setPanelOpen(false);
+            setSelectedZone(null);
+          }}
+        />
+      </SlidePanel>
     )}
+
 
     </div>
   );

@@ -1,5 +1,5 @@
 import React from 'react';
-import './DashboardAgent.css';
+import './Dashboard.css';
 
 function DashboardAgent() {
   return (

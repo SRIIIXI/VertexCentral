@@ -28,7 +28,7 @@ public class Program
     static private EnterpriseLoader? enterpriseLoader = null;
     static private FeatureLoader? featureLoader = null;
     static private LevelLoader? levelLoader = null;
-    static private LoginSessionLoader? loginSessionLoader = null;
+    static private SessionLogLoader? loginSessionLoader = null;
     static private NotificationLoader? notificationLoader = null;
     static private RoleLoader? roleLoader = null;
     static private RuleLoader? ruleLoader = null;
@@ -61,6 +61,18 @@ public class Program
             return; // Exit if the database connection cannot be established
         }
 
+        if(!dataInterface.LoadTableNames())
+        {
+            Console.WriteLine("Failed to load table names from the database.");
+            dataInterface.CloseConnection();
+            return; // Exit if table names cannot be loaded
+        }
+
+        foreach(var tableName in dataInterface.TableNames)
+        {
+            Console.WriteLine($"Found table: {tableName}");
+        }
+
         host.Start();
         Console.WriteLine("Web service is running. Press Ctrl+C to shut down.");
         host.WaitForShutdown();
@@ -88,7 +100,7 @@ public class Program
         enterpriseLoader = new EnterpriseLoader();
         featureLoader = new FeatureLoader();
         levelLoader = new LevelLoader();
-        loginSessionLoader = new LoginSessionLoader();
+        loginSessionLoader = new SessionLogLoader();
         notificationLoader = new NotificationLoader();
         roleLoader = new RoleLoader();
         ruleLoader = new RuleLoader();
@@ -194,8 +206,8 @@ public class RoutingConfiguration
         endpoints.MapGet("/api/v1/level", LevelHandler.GetAll);
         endpoints.MapGet("/api/v1/level/{id}", LevelHandler.Get);
 
-        endpoints.MapGet("/api/v1/loginsession", LoginSessionHandler.GetAll);
-        endpoints.MapGet("/api/v1/loginsession/{id}", LoginSessionHandler.Get);
+        endpoints.MapGet("/api/v1/sessionlog", SessionLogHandler.GetAll);
+        endpoints.MapGet("/api/v1/sessionlog/{id}", SessionLogHandler.Get);
 
         endpoints.MapGet("/api/v1/notification", NotificationHandler.GetAll);
         endpoints.MapGet("/api/v1/notification/{id}", NotificationHandler.Get);

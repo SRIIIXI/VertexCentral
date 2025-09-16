@@ -5,7 +5,7 @@ using EdgeLiteAPI.Models;
 
 namespace EdgeLiteAPI.Models
 {
-    public class LoginSession
+    public class SessionLog
     {
         [Required]
         [StringLength(64)]

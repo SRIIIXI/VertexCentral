@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 
-public class LoginSessionHandler
+public class SessionLogHandler
 {
     public static Task GetAll(Microsoft.AspNetCore.Http.HttpContext context)
     {

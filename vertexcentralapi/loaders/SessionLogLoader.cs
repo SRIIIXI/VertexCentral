@@ -9,15 +9,15 @@ using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 
-class LoginSessionLoader : ModelBase
+class SessionLogLoader : ModelBase
 {
-    public LoginSessionLoader() : base("LoginSessions")
+    public SessionLogLoader() : base("LoginSessions")
     {
     }
 
     public void Initialize(DataInterface? dataInterface)
     {
-        selfReference = new LoginSessionLoader();
+        selfReference = new SessionLogLoader();
         selfReference.connection = dataInterface;
     }
 

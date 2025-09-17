@@ -20,6 +20,16 @@ public class DataInterface
         connectionString = iconnectionString;
     }
 
+    public void Dispose()
+    {
+        CloseConnection();
+    }
+
+    ~DataInterface()
+    {
+        Dispose();
+    }
+
     public String ConnectionString
     {
         get { return connectionString ?? string.Empty; }
@@ -93,5 +103,91 @@ public class DataInterface
             connection.Close();
             connection = null;
         }
+    }
+
+    public Boolean ExecuteDML(String sql)
+    {
+        if (!IsConnected() || connection == null)
+        {
+            return false;
+        }
+
+        try
+        {
+            using (DbCommand command = connection.CreateCommand())
+            {
+                command.CommandText = sql;
+                command.ExecuteNonQuery();
+            }
+            return true;
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error executing non-query: {ex.Message}");
+            return false;
+        }
+    }
+
+    public Boolean ExecuteSQL(String sql, ref DataTable resultTable, ref String errorMessage)
+    {
+        if (!IsConnected() || connection == null)
+        {
+            return false;
+        }
+
+        try
+        {
+            using (DbCommand command = connection.CreateCommand())
+            {
+                command.CommandText = sql;
+                using (DbDataAdapter adapter = new NpgsqlDataAdapter((NpgsqlCommand)command))
+                {
+                    resultTable = new DataTable();
+                    adapter.Fill(resultTable);
+                    return true;
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error executing query: {ex.Message}");
+            errorMessage = ex.Message;
+            return false;
+        }
+    }
+
+    public Boolean GetAllRecords(ref ModelBase model, ref DataTable resultTable, ref String errorMessage)
+    {
+        if (model == null || string.IsNullOrEmpty(model.TableName))
+        {
+            errorMessage = "Model or TableName is null.";
+            return false;
+        }
+
+        string sql = $"SELECT * FROM {model.TableName};";
+        return ExecuteSQL(sql, ref resultTable, ref errorMessage);
+    }
+
+    public Boolean GetFilteredRecords(ref ModelBase model, String filterCondition, ref DataTable resultTable, ref String errorMessage)
+    {
+        if (model == null || string.IsNullOrEmpty(model.TableName))
+        {
+            errorMessage = "Model or TableName is null.";
+            return false;
+        }
+
+        string sql = $"SELECT * FROM {model.TableName} WHERE {filterCondition};";
+        return ExecuteSQL(sql, ref resultTable, ref errorMessage);
+    }
+
+    public Boolean InsertRecord<T>(ref ModelBase model, T item, ref String errorMessage)
+    {
+        if (model == null || string.IsNullOrEmpty(model.TableName))
+        {
+            errorMessage = "Model or TableName is null.";
+            return false;
+        }
+
+        return model.Insert(item);
     }
 }

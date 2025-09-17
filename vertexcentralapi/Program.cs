@@ -47,7 +47,7 @@ public class Program
         Microsoft.AspNetCore.Hosting.IWebHost host = hostBuilder.Build();
 
         // Open the database connection
-        string connectionString = "Host=localhost;Username=edgelite;Password=Edge#1974;Database=edgelite";
+        string connectionString = "Host=localhost;Username=vertexcentral;Password=vertexcentral@1974#0311;Database=vertexcentral";
 
         dataInterface = new DataInterface(connectionString);
 
@@ -72,13 +72,14 @@ public class Program
         {
             Console.WriteLine($"Found table: {tableName}");
         }
+        Initialize();
 
         host.Start();
         Console.WriteLine("Web service is running. Press Ctrl+C to shut down.");
         host.WaitForShutdown();
     }
 
-    private static void Initiale()
+    private static void Initialize()
     {
         if (dataInterface == null)
         {

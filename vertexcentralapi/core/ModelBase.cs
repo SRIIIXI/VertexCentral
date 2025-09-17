@@ -12,6 +12,11 @@ public abstract class ModelBase
     {
         this.tableName = tableName;
     }
+
+    public String TableName
+    {
+        get { return tableName; }
+    }
     
     public abstract Boolean Insert<T>(T item);
     public abstract Boolean Remove<T>(T item);

@@ -14,14 +14,18 @@ namespace EdgeLiteAPI.Models
         [StringLength(64)]
         public string UserId { get; set; } = string.Empty;
 
-        public ulong UnixTimestampCreated { get; set; }
+        public ulong TimeLoggedIn { get; set; }
 
-        public ulong UnixTimestampExpires { get; set; }
+        public ulong TimeLoggedOut { get; set; }
 
         public Coordinate Location { get; set; } = new Coordinate();
 
-        public bool IsActive { get; set; }
+        public bool IpAddress { get; set; }
 
         public bool IsSystem { get; set; }
+
+        public bool IsActive { get; set; }
+
+        public string UserAgent { get; set; } = string.Empty;
     }
 }

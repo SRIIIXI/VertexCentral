@@ -11,6 +11,13 @@ using Microsoft.Extensions.DependencyInjection;
 
 public class SessionLogHandler
 {
+    private static SessionLogRepository? loader = null;
+
+    public static void Initialize(SessionLogRepository logLoader)
+    {
+        loader = logLoader;
+    }
+
     public static Task GetAll(Microsoft.AspNetCore.Http.HttpContext context)
     {
         string message = "Hello from .NET 9 Web Service!";
@@ -22,6 +29,7 @@ public class SessionLogHandler
     {
         string message = "Hello from .NET 9 Web Service!";
         context.Response.ContentType = "text/plain";
+
         return context.Response.WriteAsync(message);
     }
 }

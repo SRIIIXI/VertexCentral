@@ -14,29 +14,29 @@ using Npgsql;
 public class Program
 {
     static private DataInterface? dataInterface = null;
-    static private AlarmLoader? alarmLoader = null;      
-    static  private ApplicationLoader? applicationLoader = null;
-    static private ApplicationPermissionLoader? applicationPermissionLoader = null;
-    static private AreaLoader? areaLoader = null;
-    static private AssetLoader? assetLoader = null;
-    static private AssetToDeviceMappingLoader? assetToDeviceMappingLoader = null;
-    static private ClusterLoader? clusterLoader = null;
-    static private DeviceAttributeLoader? deviceAttributeLoader = null;
-    static private DeviceLoader? deviceLoader = null;
-    static private DeviceHierarchyLoader? deviceHierarchyLoader = null;
+    static private AlarmRepository? alarmLoader = null;      
+    static  private ApplicationRepository? applicationLoader = null;
+    static private ApplicationPermissionRepository? applicationPermissionLoader = null;
+    static private AreaRepository? areaLoader = null;
+    static private AssetRepository? assetLoader = null;
+    static private AssetToDeviceMappingRepository? assetToDeviceMappingLoader = null;
+    static private ClusterRepository? clusterLoader = null;
+    static private DeviceAttributeRepository? deviceAttributeLoader = null;
+    static private DeviceRepository? deviceLoader = null;
+    static private DeviceHierarchyRepository? deviceHierarchyLoader = null;
     static private DevicePermissionLoader? devicePermissionLoader = null;
-    static private EnterpriseLoader? enterpriseLoader = null;
-    static private FeatureLoader? featureLoader = null;
-    static private LevelLoader? levelLoader = null;
-    static private SessionLogLoader? loginSessionLoader = null;
-    static private NotificationLoader? notificationLoader = null;
-    static private RoleLoader? roleLoader = null;
-    static private RuleLoader? ruleLoader = null;
-    static private SiteLoader? siteLoader = null;
-    static private TelemetryLoader? telemetryLoader = null;
-    static private UserLoader? userLoader = null;
-    static private UserToRoleMappingLoader? userToRoleMappingLoader = null;
-    static private ZoneLoader? zoneLoader = null; 
+    static private EnterpriseRepository? enterpriseLoader = null;
+    static private FeatureRepository? featureLoader = null;
+    static private LevelRepository? levelLoader = null;
+    static private SessionLogRepository? loginSessionLoader = null;
+    static private NotificationRepository? notificationLoader = null;
+    static private RoleRepository? roleLoader = null;
+    static private RuleRepository? ruleLoader = null;
+    static private SiteRepository? siteLoader = null;
+    static private TelemetryRepository? telemetryLoader = null;
+    static private UserRepository? userLoader = null;
+    static private UserToRoleMappingRepository? userToRoleMappingLoader = null;
+    static private ZoneRepository? zoneLoader = null; 
 
     public static void Main(string[] args)
     {
@@ -87,29 +87,29 @@ public class Program
             return;
         }
 
-        alarmLoader = new AlarmLoader();
-        applicationLoader = new ApplicationLoader();
-        applicationPermissionLoader = new ApplicationPermissionLoader();
-        areaLoader = new AreaLoader();
-        assetLoader = new AssetLoader();
-        assetToDeviceMappingLoader = new AssetToDeviceMappingLoader();
-        clusterLoader = new ClusterLoader();
-        deviceAttributeLoader = new DeviceAttributeLoader();
-        deviceLoader = new DeviceLoader();
-        deviceHierarchyLoader = new DeviceHierarchyLoader();
+        alarmLoader = new AlarmRepository();
+        applicationLoader = new ApplicationRepository();
+        applicationPermissionLoader = new ApplicationPermissionRepository();
+        areaLoader = new AreaRepository();
+        assetLoader = new AssetRepository();
+        assetToDeviceMappingLoader = new AssetToDeviceMappingRepository();
+        clusterLoader = new ClusterRepository();
+        deviceAttributeLoader = new DeviceAttributeRepository();
+        deviceLoader = new DeviceRepository();
+        deviceHierarchyLoader = new DeviceHierarchyRepository();
         devicePermissionLoader = new DevicePermissionLoader();
-        enterpriseLoader = new EnterpriseLoader();
-        featureLoader = new FeatureLoader();
-        levelLoader = new LevelLoader();
-        loginSessionLoader = new SessionLogLoader();
-        notificationLoader = new NotificationLoader();
-        roleLoader = new RoleLoader();
-        ruleLoader = new RuleLoader();
-        siteLoader = new SiteLoader();
-        telemetryLoader = new TelemetryLoader();
-        userLoader = new UserLoader();
-        userToRoleMappingLoader = new UserToRoleMappingLoader();
-        zoneLoader = new ZoneLoader();
+        enterpriseLoader = new EnterpriseRepository();
+        featureLoader = new FeatureRepository();
+        levelLoader = new LevelRepository();
+        loginSessionLoader = new SessionLogRepository();
+        notificationLoader = new NotificationRepository();
+        roleLoader = new RoleRepository();
+        ruleLoader = new RuleRepository();
+        siteLoader = new SiteRepository();
+        telemetryLoader = new TelemetryRepository();
+        userLoader = new UserRepository();
+        userToRoleMappingLoader = new UserToRoleMappingRepository();
+        zoneLoader = new ZoneRepository();
 
         alarmLoader.Initialize(dataInterface);
         applicationLoader.Initialize(dataInterface);
@@ -134,6 +134,8 @@ public class Program
         userLoader.Initialize(dataInterface);
         userToRoleMappingLoader.Initialize(dataInterface);
         zoneLoader.Initialize(dataInterface);
+
+        SessionLogHandler.Initialize(loginSessionLoader);
     }
 }
 

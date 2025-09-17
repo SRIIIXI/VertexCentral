@@ -156,7 +156,7 @@ public class DataInterface
         }
     }
 
-    public Boolean GetAllRecords(ref ModelBase model, ref DataTable resultTable, ref String errorMessage)
+    public Boolean GetAllRecords(ref RepositoryBase model, ref DataTable resultTable, ref String errorMessage)
     {
         if (model == null || string.IsNullOrEmpty(model.TableName))
         {
@@ -168,7 +168,7 @@ public class DataInterface
         return ExecuteSQL(sql, ref resultTable, ref errorMessage);
     }
 
-    public Boolean GetFilteredRecords(ref ModelBase model, String filterCondition, ref DataTable resultTable, ref String errorMessage)
+    public Boolean GetFilteredRecords(ref RepositoryBase model, String filterCondition, ref DataTable resultTable, ref String errorMessage)
     {
         if (model == null || string.IsNullOrEmpty(model.TableName))
         {
@@ -180,7 +180,7 @@ public class DataInterface
         return ExecuteSQL(sql, ref resultTable, ref errorMessage);
     }
 
-    public Boolean InsertRecord<T>(ref ModelBase model, T item, ref String errorMessage)
+    public Boolean InsertRecord<T>(ref RepositoryBase model, T item, ref String errorMessage)
     {
         if (model == null || string.IsNullOrEmpty(model.TableName))
         {
@@ -188,6 +188,6 @@ public class DataInterface
             return false;
         }
 
-        return model.Insert(item);
+        return false;
     }
 }

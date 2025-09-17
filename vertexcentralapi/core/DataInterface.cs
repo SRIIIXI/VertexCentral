@@ -4,6 +4,7 @@ using System.Data.Common;
 using Npgsql;
 using NpgsqlTypes;
 using System.Collections.Generic;
+using System.Text;
 
 public class DataInterface
 {
@@ -156,37 +157,130 @@ public class DataInterface
         }
     }
 
-    public Boolean GetAllRecords(ref RepositoryBase model, ref DataTable resultTable, ref String errorMessage)
+    public Boolean GetAllRecords(ref RepositoryBase model, ref String jsonResult, ref String errorMessage)
     {
+        Boolean success = false;
         if (model == null || string.IsNullOrEmpty(model.TableName))
         {
             errorMessage = "Model or TableName is null.";
             return false;
         }
 
-        string sql = $"SELECT * FROM {model.TableName};";
-        return ExecuteSQL(sql, ref resultTable, ref errorMessage);
+        string sql = $"SELECT json_agg(t) FROM {model.TableName} t LIMIT {model.PageSize} OFFSET {(model.PageNumber - 1) * model.PageSize};";
+
+        DataTable resultTable = new DataTable();
+
+        success = ExecuteSQL(sql, ref resultTable, ref errorMessage);
+
+        StringBuilder jsonBuilder = new StringBuilder();
+        jsonBuilder.Append('[');
+        bool isFirstRow = true;
+
+        foreach (DataRow row in resultTable.Rows)
+        {
+            if (!isFirstRow)
+            {
+                jsonBuilder.Append(',');
+            }
+
+            jsonBuilder.Append(row[0].ToString());
+            isFirstRow = false;
+        }
+
+        jsonBuilder.Append(']');
+
+        jsonResult = jsonBuilder.ToString();
+
+        return success;
     }
 
-    public Boolean GetFilteredRecords(ref RepositoryBase model, String filterCondition, ref DataTable resultTable, ref String errorMessage)
+    public Boolean GetFilteredRecords(ref RepositoryBase model, ref String jsonResult, String filterCondition, ref String errorMessage)
     {
+        Boolean success = false;
         if (model == null || string.IsNullOrEmpty(model.TableName))
         {
             errorMessage = "Model or TableName is null.";
             return false;
         }
 
-        string sql = $"SELECT * FROM {model.TableName} WHERE {filterCondition};";
-        return ExecuteSQL(sql, ref resultTable, ref errorMessage);
+        string sql = $"SELECT json_agg(t) FROM {model.TableName} t WHERE {filterCondition} LIMIT {model.PageSize} OFFSET {(model.PageNumber - 1) * model.PageSize};";
+        DataTable resultTable = new DataTable();
+
+        success = ExecuteSQL(sql, ref resultTable, ref errorMessage);
+        StringBuilder jsonBuilder = new StringBuilder();
+        jsonBuilder.Append('[');
+        bool isFirstRow = true;
+
+        foreach (DataRow row in resultTable.Rows)
+        {
+            if (!isFirstRow)
+            {
+                jsonBuilder.Append(',');
+            }
+
+            jsonBuilder.Append(row[0].ToString());
+            isFirstRow = false;
+        }
+
+        jsonBuilder.Append(']');
+
+        jsonResult = jsonBuilder.ToString();
+
+        return success;
     }
 
-    public Boolean InsertRecord<T>(ref RepositoryBase model, T item, ref String errorMessage)
+    public Boolean InsertRecord(ref RepositoryBase model, ref String errorMessage)
     {
         if (model == null || string.IsNullOrEmpty(model.TableName))
         {
             errorMessage = "Model or TableName is null.";
             return false;
         }
+
+        if (ExecuteDML(model.GetInsertSQL()))
+        {
+            return true;
+        }   
+
+        errorMessage = "Failed to insert record.";
+
+        return false;
+    }
+
+    public Boolean UpdateRecord(ref RepositoryBase model, ref String errorMessage)
+    {
+        if (model == null || string.IsNullOrEmpty(model.TableName))
+        {
+            errorMessage = "Model or TableName is null.";
+            return false;
+        }
+
+        if (ExecuteDML(model.GetUpdateSQL()))
+        {
+            return true;
+        }
+
+        errorMessage = "Failed to update record.";
+
+        return false;
+    }
+    
+    public Boolean DeleteRecord(ref RepositoryBase model, ref String errorMessage)
+    {
+        if (model == null || string.IsNullOrEmpty(model.TableName))
+        {
+            errorMessage = "Model or TableName is null.";
+            return false;
+        }
+
+        string sql = $"DELETE FROM {model.TableName} WHERE id = '{model.Id}';";
+
+        if (ExecuteDML(sql))
+        {
+            return true;
+        }
+
+        errorMessage = "Failed to delete record.";
 
         return false;
     }

@@ -1,468 +1,468 @@
--- IoT Data Model - PostgreSQL Schema Creation Script
--- Generated from C header file model definitions
+-- IoT Data Model - PostgreSQL Schema Creation Script (Pascal Case with Double Quotes)
+-- Converted from snake_case to PascalCase with proper PostgreSQL quoting
 
 -- Create database (run this separately if needed)
--- CREATE DATABASE iot_platform;
--- \c iot_platform;
+-- CREATE DATABASE "IotPlatform";
+-- \c "IotPlatform";
 
 -- Enable PostGIS extension for geographic data (if needed)
 -- CREATE EXTENSION IF NOT EXISTS postgis;
 
 -- Create custom data types for enums
-CREATE TYPE site_type_enum AS ENUM ('I', 'O'); -- Indoor, Outdoor
-CREATE TYPE alarm_type_enum AS ENUM ('C', 'W', 'I'); -- Critical, Warning, Info
-CREATE TYPE notification_type_enum AS ENUM ('A', 'T', 'E'); -- Alarm, Telemetry, Event
-CREATE TYPE telemetry_data_type_enum AS ENUM ('S', 'N', 'B', 'L'); -- String, Number, Boolean, Location
-CREATE TYPE permission_type_enum AS ENUM ('READ', 'WRITE', 'EXECUTE', 'DELETE', 'ADMIN', 'CUSTOM');
-CREATE TYPE device_type_enum AS ENUM ('SENSOR', 'ACTUATOR', 'CONTROLLER', 'GATEWAY', 'VIRTUAL', 'OTHER');
-CREATE TYPE device_sub_type_enum AS ENUM ('TEMPERATURE_SENSOR', 'HUMIDITY_SENSOR', 'PRESSURE_SENSOR', 'LIGHT_SENSOR', 'MOTION_SENSOR', 'OTHER');
-CREATE TYPE device_life_cycle_enum AS ENUM ('NEW', 'IN_USE', 'DECOMMISSIONED', 'RETIRED', 'OTHER');
-CREATE TYPE device_attribute_type_enum AS ENUM ('S', 'N', 'B', 'L'); -- String, Number, Boolean, Location
-CREATE TYPE rule_type_enum AS ENUM ('A', 'C', 'E'); -- Automation, Condition, Event
+CREATE TYPE "SiteTypeEnum" AS ENUM ('I', 'O'); -- Indoor, Outdoor
+CREATE TYPE "AlarmTypeEnum" AS ENUM ('C', 'W', 'I'); -- Critical, Warning, Info
+CREATE TYPE "NotificationTypeEnum" AS ENUM ('A', 'T', 'E'); -- Alarm, Telemetry, Event
+CREATE TYPE "TelemetryDataTypeEnum" AS ENUM ('S', 'N', 'B', 'L'); -- String, Number, Boolean, Location
+CREATE TYPE "PermissionTypeEnum" AS ENUM ('READ', 'WRITE', 'EXECUTE', 'DELETE', 'ADMIN', 'CUSTOM');
+CREATE TYPE "DeviceTypeEnum" AS ENUM ('SENSOR', 'ACTUATOR', 'CONTROLLER', 'GATEWAY', 'VIRTUAL', 'OTHER');
+CREATE TYPE "DeviceSubTypeEnum" AS ENUM ('TEMPERATURE_SENSOR', 'HUMIDITY_SENSOR', 'PRESSURE_SENSOR', 'LIGHT_SENSOR', 'MOTION_SENSOR', 'OTHER');
+CREATE TYPE "DeviceLifeCycleEnum" AS ENUM ('NEW', 'IN_USE', 'DECOMMISSIONED', 'RETIRED', 'OTHER');
+CREATE TYPE "DeviceAttributeTypeEnum" AS ENUM ('S', 'N', 'B', 'L'); -- String, Number, Boolean, Location
+CREATE TYPE "RuleTypeEnum" AS ENUM ('A', 'C', 'E'); -- Automation, Condition, Event
 
 -- Create composite type for coordinates
-CREATE TYPE coordinate_type AS (
-    latitude DOUBLE PRECISION,
-    longitude DOUBLE PRECISION,
-    altitude DOUBLE PRECISION
+CREATE TYPE "CoordinateType" AS (
+    "Latitude" DOUBLE PRECISION,
+    "Longitude" DOUBLE PRECISION,
+    "Altitude" DOUBLE PRECISION
 );
 
 -- ============================================================================
 -- ENTERPRISES TABLE
 -- ============================================================================
-CREATE TABLE enterprises (
-    enterprise_id VARCHAR(64) PRIMARY KEY,
-    enterprise_name VARCHAR(64) NOT NULL,
-    description VARCHAR(255),
-    contact_mo VARCHAR(31),
-    contact_email VARCHAR(256),
-    contact_first_name VARCHAR(64),
-    contact_last_name VARCHAR(64),
-    unix_timestamp_created BIGINT,
-    whitelabel_text VARCHAR(1024),
-    address_line1 VARCHAR(256),
-    address_line2 VARCHAR(256),
-    address_city VARCHAR(32),
-    address_state VARCHAR(32),
-    address_country VARCHAR(32),
-    address_pin_code VARCHAR(16),
-    is_deleted BOOLEAN DEFAULT TRUE,
-    is_system BOOLEAN DEFAULT FALSE,
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+CREATE TABLE "Enterprises" (
+    "EnterpriseId" VARCHAR(64) PRIMARY KEY,
+    "EnterpriseName" VARCHAR(64) NOT NULL,
+    "Description" VARCHAR(255),
+    "ContactMo" VARCHAR(31),
+    "ContactEmail" VARCHAR(256),
+    "ContactFirstName" VARCHAR(64),
+    "ContactLastName" VARCHAR(64),
+    "UnixTimestampCreated" BIGINT,
+    "WhitelabelText" VARCHAR(1024),
+    "AddressLine1" VARCHAR(256),
+    "AddressLine2" VARCHAR(256),
+    "AddressCity" VARCHAR(32),
+    "AddressState" VARCHAR(32),
+    "AddressCountry" VARCHAR(32),
+    "AddressPinCode" VARCHAR(16),
+    "IsDeleted" BOOLEAN DEFAULT TRUE,
+    "IsSystem" BOOLEAN DEFAULT FALSE,
+    "CreatedAt" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    "UpdatedAt" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
 -- ============================================================================
 -- USERS TABLE
 -- ============================================================================
-CREATE TABLE users (
-    user_id VARCHAR(64) PRIMARY KEY,
-    enterprise_id VARCHAR(64) NOT NULL,
-    user_name VARCHAR(64) NOT NULL UNIQUE,
-    email VARCHAR(255) NOT NULL UNIQUE,
-    contact_mo VARCHAR(31),
-    first_name VARCHAR(64),
-    last_name VARCHAR(64),
-    password_hash VARCHAR(256),
-    password_salt VARCHAR(256),
-    unix_timestamp_last_login BIGINT,
-    is_deleted BOOLEAN DEFAULT TRUE,
-    is_system BOOLEAN DEFAULT FALSE,
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (enterprise_id) REFERENCES enterprises(enterprise_id) ON DELETE CASCADE
+CREATE TABLE "Users" (
+    "UserId" VARCHAR(64) PRIMARY KEY,
+    "EnterpriseId" VARCHAR(64) NOT NULL,
+    "UserName" VARCHAR(64) NOT NULL UNIQUE,
+    "Email" VARCHAR(255) NOT NULL UNIQUE,
+    "ContactMo" VARCHAR(31),
+    "FirstName" VARCHAR(64),
+    "LastName" VARCHAR(64),
+    "PasswordHash" VARCHAR(256),
+    "PasswordSalt" VARCHAR(256),
+    "UnixTimestampLastLogin" BIGINT,
+    "IsDeleted" BOOLEAN DEFAULT TRUE,
+    "IsSystem" BOOLEAN DEFAULT FALSE,
+    "CreatedAt" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    "UpdatedAt" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY ("EnterpriseId") REFERENCES "Enterprises"("EnterpriseId") ON DELETE CASCADE
 );
 
 -- ============================================================================
 -- CLUSTERS TABLE
 -- ============================================================================
-CREATE TABLE clusters (
-    cluster_id VARCHAR(64) PRIMARY KEY,
-    cluster_name VARCHAR(64) NOT NULL,
-    description VARCHAR(256),
-    enterprise_id VARCHAR(64) NOT NULL,
-    cluster_count INTEGER DEFAULT 0,
-    is_deleted BOOLEAN DEFAULT TRUE,
-    is_system BOOLEAN DEFAULT FALSE,
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (enterprise_id) REFERENCES enterprises(enterprise_id) ON DELETE CASCADE
+CREATE TABLE "Clusters" (
+    "ClusterId" VARCHAR(64) PRIMARY KEY,
+    "ClusterName" VARCHAR(64) NOT NULL,
+    "Description" VARCHAR(256),
+    "EnterpriseId" VARCHAR(64) NOT NULL,
+    "ClusterCount" INTEGER DEFAULT 0,
+    "IsDeleted" BOOLEAN DEFAULT TRUE,
+    "IsSystem" BOOLEAN DEFAULT FALSE,
+    "CreatedAt" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    "UpdatedAt" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY ("EnterpriseId") REFERENCES "Enterprises"("EnterpriseId") ON DELETE CASCADE
 );
 
 -- ============================================================================
 -- SITES TABLE
 -- ============================================================================
-CREATE TABLE sites (
-    site_id VARCHAR(64) PRIMARY KEY,
-    cluster_id VARCHAR(64) NOT NULL,
-    site_name VARCHAR(64) NOT NULL,
-    description VARCHAR(256),
-    site_type site_type_enum NOT NULL,
-    site_level_count INTEGER DEFAULT 0,
-    is_master_site BOOLEAN DEFAULT FALSE,
-    is_deleted BOOLEAN DEFAULT TRUE,
-    is_system BOOLEAN DEFAULT FALSE,
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (cluster_id) REFERENCES clusters(cluster_id) ON DELETE CASCADE
+CREATE TABLE "Sites" (
+    "SiteId" VARCHAR(64) PRIMARY KEY,
+    "ClusterId" VARCHAR(64) NOT NULL,
+    "SiteName" VARCHAR(64) NOT NULL,
+    "Description" VARCHAR(256),
+    "SiteType" "SiteTypeEnum" NOT NULL,
+    "SiteLevelCount" INTEGER DEFAULT 0,
+    "IsMasterSite" BOOLEAN DEFAULT FALSE,
+    "IsDeleted" BOOLEAN DEFAULT TRUE,
+    "IsSystem" BOOLEAN DEFAULT FALSE,
+    "CreatedAt" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    "UpdatedAt" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY ("ClusterId") REFERENCES "Clusters"("ClusterId") ON DELETE CASCADE
 );
 
 -- ============================================================================
 -- AREAS TABLE
 -- ============================================================================
-CREATE TABLE areas (
-    area_id VARCHAR(64) PRIMARY KEY,
-    area_name VARCHAR(64) NOT NULL,
-    description VARCHAR(256),
-    area_points coordinate_type[],
-    area_points_count INTEGER DEFAULT 0,
-    is_deleted BOOLEAN DEFAULT TRUE,
-    is_system BOOLEAN DEFAULT FALSE,
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    CONSTRAINT max_area_points CHECK (area_points_count <= 4096)
+CREATE TABLE "Areas" (
+    "AreaId" VARCHAR(64) PRIMARY KEY,
+    "AreaName" VARCHAR(64) NOT NULL,
+    "Description" VARCHAR(256),
+    "AreaPoints" "CoordinateType"[],
+    "AreaPointsCount" INTEGER DEFAULT 0,
+    "IsDeleted" BOOLEAN DEFAULT TRUE,
+    "IsSystem" BOOLEAN DEFAULT FALSE,
+    "CreatedAt" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    "UpdatedAt" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT "MaxAreaPoints" CHECK ("AreaPointsCount" <= 4096)
 );
 
 -- ============================================================================
 -- LEVELS TABLE
 -- ============================================================================
-CREATE TABLE levels (
-    level_id VARCHAR(64) PRIMARY KEY,
-    site_id VARCHAR(64) NOT NULL,
-    level_name VARCHAR(64) NOT NULL,
-    description VARCHAR(256),
-    level_number INTEGER NOT NULL,
-    bounds_area_id VARCHAR(64),
-    is_deleted BOOLEAN DEFAULT TRUE,
-    is_system BOOLEAN DEFAULT FALSE,
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (site_id) REFERENCES sites(site_id) ON DELETE CASCADE,
-    FOREIGN KEY (bounds_area_id) REFERENCES areas(area_id) ON DELETE SET NULL
+CREATE TABLE "Levels" (
+    "LevelId" VARCHAR(64) PRIMARY KEY,
+    "SiteId" VARCHAR(64) NOT NULL,
+    "LevelName" VARCHAR(64) NOT NULL,
+    "Description" VARCHAR(256),
+    "LevelNumber" INTEGER NOT NULL,
+    "BoundsAreaId" VARCHAR(64),
+    "IsDeleted" BOOLEAN DEFAULT TRUE,
+    "IsSystem" BOOLEAN DEFAULT FALSE,
+    "CreatedAt" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    "UpdatedAt" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY ("SiteId") REFERENCES "Sites"("SiteId") ON DELETE CASCADE,
+    FOREIGN KEY ("BoundsAreaId") REFERENCES "Areas"("AreaId") ON DELETE SET NULL
 );
 
 -- ============================================================================
 -- ZONES TABLE
 -- ============================================================================
-CREATE TABLE zones (
-    zone_id VARCHAR(64) PRIMARY KEY,
-    level_id VARCHAR(64) NOT NULL,
-    zone_name VARCHAR(64) NOT NULL,
-    description VARCHAR(256),
-    zone_points coordinate_type[],
-    zone_points_count INTEGER DEFAULT 0,
-    is_deleted BOOLEAN DEFAULT TRUE,
-    is_system BOOLEAN DEFAULT FALSE,
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (level_id) REFERENCES levels(level_id) ON DELETE CASCADE,
-    CONSTRAINT max_zone_points CHECK (zone_points_count <= 4096)
+CREATE TABLE "Zones" (
+    "ZoneId" VARCHAR(64) PRIMARY KEY,
+    "LevelId" VARCHAR(64) NOT NULL,
+    "ZoneName" VARCHAR(64) NOT NULL,
+    "Description" VARCHAR(256),
+    "ZonePoints" "CoordinateType"[],
+    "ZonePointsCount" INTEGER DEFAULT 0,
+    "IsDeleted" BOOLEAN DEFAULT TRUE,
+    "IsSystem" BOOLEAN DEFAULT FALSE,
+    "CreatedAt" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    "UpdatedAt" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY ("LevelId") REFERENCES "Levels"("LevelId") ON DELETE CASCADE,
+    CONSTRAINT "MaxZonePoints" CHECK ("ZonePointsCount" <= 4096)
 );
 
 -- ============================================================================
 -- DEVICES TABLE
 -- ============================================================================
-CREATE TABLE devices (
-    device_id VARCHAR(64) PRIMARY KEY,
-    device_name VARCHAR(64) NOT NULL,
-    description VARCHAR(256),
-    serial_no VARCHAR(64),
-    hardware_id VARCHAR(64),
-    firmware_version VARCHAR(64),
-    model VARCHAR(64),
-    manufacturer VARCHAR(64),
-    device_type device_type_enum NOT NULL,
-    device_sub_type device_sub_type_enum NOT NULL,
-    device_inventory_life_cycle device_life_cycle_enum NOT NULL,
-    is_deleted BOOLEAN DEFAULT TRUE,
-    is_connected BOOLEAN DEFAULT FALSE,
-    is_configured BOOLEAN DEFAULT FALSE,
-    is_system BOOLEAN DEFAULT FALSE,
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+CREATE TABLE "Devices" (
+    "DeviceId" VARCHAR(64) PRIMARY KEY,
+    "DeviceName" VARCHAR(64) NOT NULL,
+    "Description" VARCHAR(256),
+    "SerialNo" VARCHAR(64),
+    "HardwareId" VARCHAR(64),
+    "FirmwareVersion" VARCHAR(64),
+    "Model" VARCHAR(64),
+    "Manufacturer" VARCHAR(64),
+    "DeviceType" "DeviceTypeEnum" NOT NULL,
+    "DeviceSubType" "DeviceSubTypeEnum" NOT NULL,
+    "DeviceInventoryLifeCycle" "DeviceLifeCycleEnum" NOT NULL,
+    "IsDeleted" BOOLEAN DEFAULT TRUE,
+    "IsConnected" BOOLEAN DEFAULT FALSE,
+    "IsConfigured" BOOLEAN DEFAULT FALSE,
+    "IsSystem" BOOLEAN DEFAULT FALSE,
+    "CreatedAt" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    "UpdatedAt" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
 -- ============================================================================
 -- ASSETS TABLE
 -- ============================================================================
-CREATE TABLE assets (
-    asset_id VARCHAR(64) PRIMARY KEY,
-    asset_name VARCHAR(64) NOT NULL,
-    description VARCHAR(256),
-    serial_no VARCHAR(64),
-    hardware_id VARCHAR(64),
-    firmware_version VARCHAR(64),
-    model VARCHAR(64),
-    manufacturer VARCHAR(64),
-    category_id VARCHAR(64),
-    subcategory_id VARCHAR(64),
-    site_id VARCHAR(64),
-    level_id VARCHAR(64),
-    is_deleted BOOLEAN DEFAULT TRUE,
-    is_system BOOLEAN DEFAULT FALSE,
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (site_id) REFERENCES sites(site_id) ON DELETE SET NULL,
-    FOREIGN KEY (level_id) REFERENCES levels(level_id) ON DELETE SET NULL
+CREATE TABLE "Assets" (
+    "AssetId" VARCHAR(64) PRIMARY KEY,
+    "AssetName" VARCHAR(64) NOT NULL,
+    "Description" VARCHAR(256),
+    "SerialNo" VARCHAR(64),
+    "HardwareId" VARCHAR(64),
+    "FirmwareVersion" VARCHAR(64),
+    "Model" VARCHAR(64),
+    "Manufacturer" VARCHAR(64),
+    "CategoryId" VARCHAR(64),
+    "SubcategoryId" VARCHAR(64),
+    "SiteId" VARCHAR(64),
+    "LevelId" VARCHAR(64),
+    "IsDeleted" BOOLEAN DEFAULT TRUE,
+    "IsSystem" BOOLEAN DEFAULT FALSE,
+    "CreatedAt" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    "UpdatedAt" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY ("SiteId") REFERENCES "Sites"("SiteId") ON DELETE SET NULL,
+    FOREIGN KEY ("LevelId") REFERENCES "Levels"("LevelId") ON DELETE SET NULL
 );
 
 -- ============================================================================
--- ASSET_SENSOR_MAPPINGS TABLE
+-- ASSET_DEVICE_MAPPINGS TABLE
 -- ============================================================================
-CREATE TABLE asset_device_mappings (
-    asset_device_mapping_id VARCHAR(64) PRIMARY KEY,
-    asset_id VARCHAR(64) NOT NULL,
-    device_count INTEGER DEFAULT 0,
-    unix_timestamp_created BIGINT,
-    unix_timestamp_updated BIGINT,
-    is_deleted BOOLEAN DEFAULT TRUE,
-    is_system BOOLEAN DEFAULT FALSE,
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (asset_id) REFERENCES assets(asset_id) ON DELETE CASCADE,
-    CONSTRAINT max_device_per_asset CHECK (device_count <= 32)
+CREATE TABLE "AssetDeviceMappings" (
+    "AssetDeviceMappingId" VARCHAR(64) PRIMARY KEY,
+    "AssetId" VARCHAR(64) NOT NULL,
+    "DeviceCount" INTEGER DEFAULT 0,
+    "UnixTimestampCreated" BIGINT,
+    "UnixTimestampUpdated" BIGINT,
+    "IsDeleted" BOOLEAN DEFAULT TRUE,
+    "IsSystem" BOOLEAN DEFAULT FALSE,
+    "CreatedAt" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    "UpdatedAt" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY ("AssetId") REFERENCES "Assets"("AssetId") ON DELETE CASCADE,
+    CONSTRAINT "MaxDevicePerAsset" CHECK ("DeviceCount" <= 32)
 );
 
 -- ============================================================================
--- ASSET_SENSORS TABLE (Junction table for asset-sensor many-to-many relationship)
+-- ASSET_DEVICES TABLE (Junction table for asset-device many-to-many relationship)
 -- ============================================================================
-CREATE TABLE asset_devices (
-    id SERIAL PRIMARY KEY,
-    asset_device_mapping_id VARCHAR(64) NOT NULL,
-    device_id VARCHAR(64) NOT NULL,
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (asset_device_mapping_id) REFERENCES asset_device_mappings(asset_device_mapping_id) ON DELETE CASCADE,
-    FOREIGN KEY (device_id) REFERENCES devices(device_id) ON DELETE CASCADE,
-    UNIQUE(asset_device_mapping_id, device_id)
+CREATE TABLE "AssetDevices" (
+    "Id" SERIAL PRIMARY KEY,
+    "AssetDeviceMappingId" VARCHAR(64) NOT NULL,
+    "DeviceId" VARCHAR(64) NOT NULL,
+    "CreatedAt" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY ("AssetDeviceMappingId") REFERENCES "AssetDeviceMappings"("AssetDeviceMappingId") ON DELETE CASCADE,
+    FOREIGN KEY ("DeviceId") REFERENCES "Devices"("DeviceId") ON DELETE CASCADE,
+    UNIQUE("AssetDeviceMappingId", "DeviceId")
 );
 
 -- ============================================================================
 -- DEVICE_HIERARCHIES TABLE
 -- ============================================================================
-CREATE TABLE device_hierarchies (
-    device_hierarchy_id VARCHAR(64) PRIMARY KEY,
-    device_hierarchy_name VARCHAR(64),
-    description VARCHAR(256),
-    parent_device_id VARCHAR(64) NOT NULL,
-    child_device_id VARCHAR(64) NOT NULL,
-    unix_timestamp_created BIGINT,
-    unix_timestamp_updated BIGINT,
-    is_deleted BOOLEAN DEFAULT TRUE,
-    is_system BOOLEAN DEFAULT FALSE,
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (parent_device_id) REFERENCES devices(device_id) ON DELETE CASCADE,
-    FOREIGN KEY (child_device_id) REFERENCES devices(device_id) ON DELETE CASCADE,
-    CONSTRAINT no_self_reference CHECK (parent_device_id != child_device_id)
+CREATE TABLE "DeviceHierarchies" (
+    "DeviceHierarchyId" VARCHAR(64) PRIMARY KEY,
+    "DeviceHierarchyName" VARCHAR(64),
+    "Description" VARCHAR(256),
+    "ParentDeviceId" VARCHAR(64) NOT NULL,
+    "ChildDeviceId" VARCHAR(64) NOT NULL,
+    "UnixTimestampCreated" BIGINT,
+    "UnixTimestampUpdated" BIGINT,
+    "IsDeleted" BOOLEAN DEFAULT TRUE,
+    "IsSystem" BOOLEAN DEFAULT FALSE,
+    "CreatedAt" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    "UpdatedAt" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY ("ParentDeviceId") REFERENCES "Devices"("DeviceId") ON DELETE CASCADE,
+    FOREIGN KEY ("ChildDeviceId") REFERENCES "Devices"("DeviceId") ON DELETE CASCADE,
+    CONSTRAINT "NoSelfReference" CHECK ("ParentDeviceId" != "ChildDeviceId")
 );
 
 -- ============================================================================
 -- DEVICE_PERMISSIONS TABLE
 -- ============================================================================
-CREATE TABLE device_permissions (
-    device_permission_id VARCHAR(64) PRIMARY KEY,
-    device_permission_name VARCHAR(64),
-    description VARCHAR(256),
-    device_id VARCHAR(64) NOT NULL,
-    user_id VARCHAR(64) NOT NULL,
-    permission_type permission_type_enum NOT NULL,
-    unix_timestamp_created BIGINT,
-    unix_timestamp_updated BIGINT,
-    is_deleted BOOLEAN DEFAULT TRUE,
-    is_system BOOLEAN DEFAULT FALSE,
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (device_id) REFERENCES devices(device_id) ON DELETE CASCADE,
-    FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
+CREATE TABLE "DevicePermissions" (
+    "DevicePermissionId" VARCHAR(64) PRIMARY KEY,
+    "DevicePermissionName" VARCHAR(64),
+    "Description" VARCHAR(256),
+    "DeviceId" VARCHAR(64) NOT NULL,
+    "UserId" VARCHAR(64) NOT NULL,
+    "PermissionType" "PermissionTypeEnum" NOT NULL,
+    "UnixTimestampCreated" BIGINT,
+    "UnixTimestampUpdated" BIGINT,
+    "IsDeleted" BOOLEAN DEFAULT TRUE,
+    "IsSystem" BOOLEAN DEFAULT FALSE,
+    "CreatedAt" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    "UpdatedAt" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY ("DeviceId") REFERENCES "Devices"("DeviceId") ON DELETE CASCADE,
+    FOREIGN KEY ("UserId") REFERENCES "Users"("UserId") ON DELETE CASCADE
 );
 
 -- ============================================================================
 -- DEVICE_ATTRIBUTES TABLE
 -- ============================================================================
-CREATE TABLE device_attributes (
-    device_attribute_id VARCHAR(64) PRIMARY KEY,
-    device_attribute_name VARCHAR(64),
-    description VARCHAR(256),
-    device_id VARCHAR(64) NOT NULL,
-    attribute_type device_attribute_type_enum NOT NULL,
-    value_string VARCHAR(256),
-    value_number DOUBLE PRECISION,
-    value_boolean BOOLEAN,
-    value_location coordinate_type,
-    unit VARCHAR(32),
-    accuracy DOUBLE PRECISION,
-    precision_val DOUBLE PRECISION, -- 'precision' is reserved keyword
-    range_min DOUBLE PRECISION,
-    range_max DOUBLE PRECISION,
-    is_deleted BOOLEAN DEFAULT TRUE,
-    is_system BOOLEAN DEFAULT FALSE,
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (device_id) REFERENCES devices(device_id) ON DELETE CASCADE
+CREATE TABLE "DeviceAttributes" (
+    "DeviceAttributeId" VARCHAR(64) PRIMARY KEY,
+    "DeviceAttributeName" VARCHAR(64),
+    "Description" VARCHAR(256),
+    "DeviceId" VARCHAR(64) NOT NULL,
+    "AttributeType" "DeviceAttributeTypeEnum" NOT NULL,
+    "ValueString" VARCHAR(256),
+    "ValueNumber" DOUBLE PRECISION,
+    "ValueBoolean" BOOLEAN,
+    "ValueLocation" "CoordinateType",
+    "Unit" VARCHAR(32),
+    "Accuracy" DOUBLE PRECISION,
+    "PrecisionVal" DOUBLE PRECISION, -- 'precision' is reserved keyword
+    "RangeMin" DOUBLE PRECISION,
+    "RangeMax" DOUBLE PRECISION,
+    "IsDeleted" BOOLEAN DEFAULT TRUE,
+    "IsSystem" BOOLEAN DEFAULT FALSE,
+    "CreatedAt" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    "UpdatedAt" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY ("DeviceId") REFERENCES "Devices"("DeviceId") ON DELETE CASCADE
 );
 
 -- ============================================================================
 -- APPLICATIONS TABLE
 -- ============================================================================
-CREATE TABLE applications (
-    application_id VARCHAR(64) PRIMARY KEY,
-    application_name VARCHAR(64) NOT NULL,
-    description VARCHAR(256),
-    version VARCHAR(64),
-    vendor VARCHAR(64),
-    category_id VARCHAR(64),
-    subcategory_id VARCHAR(64),
-    features_count INTEGER DEFAULT 0,
-    is_deleted BOOLEAN DEFAULT TRUE,
-    is_system BOOLEAN DEFAULT FALSE,
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    CONSTRAINT max_features_per_app CHECK (features_count <= 1024)
+CREATE TABLE "Applications" (
+    "ApplicationId" VARCHAR(64) PRIMARY KEY,
+    "ApplicationName" VARCHAR(64) NOT NULL,
+    "Description" VARCHAR(256),
+    "Version" VARCHAR(64),
+    "Vendor" VARCHAR(64),
+    "CategoryId" VARCHAR(64),
+    "SubcategoryId" VARCHAR(64),
+    "FeaturesCount" INTEGER DEFAULT 0,
+    "IsDeleted" BOOLEAN DEFAULT TRUE,
+    "IsSystem" BOOLEAN DEFAULT FALSE,
+    "CreatedAt" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    "UpdatedAt" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT "MaxFeaturesPerApp" CHECK ("FeaturesCount" <= 1024)
 );
 
 -- ============================================================================
 -- FEATURES TABLE
 -- ============================================================================
-CREATE TABLE features (
-    feature_id VARCHAR(64) PRIMARY KEY,
-    feature_name VARCHAR(64) NOT NULL,
-    description VARCHAR(256),
-    application_id VARCHAR(64) NOT NULL,
-    unix_timestamp_created BIGINT,
-    unix_timestamp_updated BIGINT,
-    is_deleted BOOLEAN DEFAULT TRUE,
-    is_system BOOLEAN DEFAULT FALSE,
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (application_id) REFERENCES applications(application_id) ON DELETE CASCADE
+CREATE TABLE "Features" (
+    "FeatureId" VARCHAR(64) PRIMARY KEY,
+    "FeatureName" VARCHAR(64) NOT NULL,
+    "Description" VARCHAR(256),
+    "ApplicationId" VARCHAR(64) NOT NULL,
+    "UnixTimestampCreated" BIGINT,
+    "UnixTimestampUpdated" BIGINT,
+    "IsDeleted" BOOLEAN DEFAULT TRUE,
+    "IsSystem" BOOLEAN DEFAULT FALSE,
+    "CreatedAt" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    "UpdatedAt" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY ("ApplicationId") REFERENCES "Applications"("ApplicationId") ON DELETE CASCADE
 );
 
 -- ============================================================================
 -- RULES TABLE
 -- ============================================================================
-CREATE TABLE rules (
-    rule_id VARCHAR(64) PRIMARY KEY,
-    rule_name VARCHAR(64) NOT NULL,
-    description VARCHAR(256),
-    rule_type rule_type_enum NOT NULL,
-    rule_expression VARCHAR(1024),
-    priority INTEGER DEFAULT 0,
-    is_deleted BOOLEAN DEFAULT TRUE,
-    is_system BOOLEAN DEFAULT FALSE,
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+CREATE TABLE "Rules" (
+    "RuleId" VARCHAR(64) PRIMARY KEY,
+    "RuleName" VARCHAR(64) NOT NULL,
+    "Description" VARCHAR(256),
+    "RuleType" "RuleTypeEnum" NOT NULL,
+    "RuleExpression" VARCHAR(1024),
+    "Priority" INTEGER DEFAULT 0,
+    "IsDeleted" BOOLEAN DEFAULT TRUE,
+    "IsSystem" BOOLEAN DEFAULT FALSE,
+    "CreatedAt" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    "UpdatedAt" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
 -- ============================================================================
 -- APPLICATION_PERMISSIONS TABLE
 -- ============================================================================
-CREATE TABLE application_permissions (
-    application_permission_id VARCHAR(64) PRIMARY KEY,
-    application_id VARCHAR(64) NOT NULL,
-    user_id VARCHAR(64) NOT NULL,
-    permission_type permission_type_enum NOT NULL,
-    unix_timestamp_created BIGINT,
-    unix_timestamp_updated BIGINT,
-    is_deleted BOOLEAN DEFAULT TRUE,
-    is_system BOOLEAN DEFAULT FALSE,
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (application_id) REFERENCES applications(application_id) ON DELETE CASCADE,
-    FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
+CREATE TABLE "ApplicationPermissions" (
+    "ApplicationPermissionId" VARCHAR(64) PRIMARY KEY,
+    "ApplicationId" VARCHAR(64) NOT NULL,
+    "UserId" VARCHAR(64) NOT NULL,
+    "PermissionType" "PermissionTypeEnum" NOT NULL,
+    "UnixTimestampCreated" BIGINT,
+    "UnixTimestampUpdated" BIGINT,
+    "IsDeleted" BOOLEAN DEFAULT TRUE,
+    "IsSystem" BOOLEAN DEFAULT FALSE,
+    "CreatedAt" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    "UpdatedAt" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY ("ApplicationId") REFERENCES "Applications"("ApplicationId") ON DELETE CASCADE,
+    FOREIGN KEY ("UserId") REFERENCES "Users"("UserId") ON DELETE CASCADE
 );
 
 -- ============================================================================
 -- ROLES TABLE
 -- ============================================================================
-CREATE TABLE roles (
-    role_id VARCHAR(64) PRIMARY KEY,
-    role_name VARCHAR(64) NOT NULL,
-    description VARCHAR(256),
-    permissions_count INTEGER DEFAULT 0,
-    unix_timestamp_created BIGINT,
-    unix_timestamp_updated BIGINT,
-    is_deleted BOOLEAN DEFAULT TRUE,
-    is_system BOOLEAN DEFAULT FALSE,
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    CONSTRAINT max_permissions_per_role CHECK (permissions_count <= 1024)
+CREATE TABLE "Roles" (
+    "RoleId" VARCHAR(64) PRIMARY KEY,
+    "RoleName" VARCHAR(64) NOT NULL,
+    "Description" VARCHAR(256),
+    "PermissionsCount" INTEGER DEFAULT 0,
+    "UnixTimestampCreated" BIGINT,
+    "UnixTimestampUpdated" BIGINT,
+    "IsDeleted" BOOLEAN DEFAULT TRUE,
+    "IsSystem" BOOLEAN DEFAULT FALSE,
+    "CreatedAt" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    "UpdatedAt" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT "MaxPermissionsPerRole" CHECK ("PermissionsCount" <= 1024)
 );
 
 -- ============================================================================
 -- ROLE_PERMISSIONS TABLE (Junction table for role-permission many-to-many relationship)
 -- ============================================================================
-CREATE TABLE role_permissions (
-    id SERIAL PRIMARY KEY,
-    role_id VARCHAR(64) NOT NULL,
-    application_permission_id VARCHAR(64) NOT NULL,
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (role_id) REFERENCES roles(role_id) ON DELETE CASCADE,
-    FOREIGN KEY (application_permission_id) REFERENCES application_permissions(application_permission_id) ON DELETE CASCADE,
-    UNIQUE(role_id, application_permission_id)
+CREATE TABLE "RolePermissions" (
+    "Id" SERIAL PRIMARY KEY,
+    "RoleId" VARCHAR(64) NOT NULL,
+    "ApplicationPermissionId" VARCHAR(64) NOT NULL,
+    "CreatedAt" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY ("RoleId") REFERENCES "Roles"("RoleId") ON DELETE CASCADE,
+    FOREIGN KEY ("ApplicationPermissionId") REFERENCES "ApplicationPermissions"("ApplicationPermissionId") ON DELETE CASCADE,
+    UNIQUE("RoleId", "ApplicationPermissionId")
 );
 
 -- ============================================================================
 -- USER_ROLE_MAPPINGS TABLE
 -- ============================================================================
-CREATE TABLE user_role_mappings (
-    user_role_mapping_id VARCHAR(64) PRIMARY KEY,
-    user_id VARCHAR(64) NOT NULL,
-    role_id VARCHAR(64) NOT NULL,
-    unix_timestamp_created BIGINT,
-    unix_timestamp_updated BIGINT,
-    is_deleted BOOLEAN DEFAULT TRUE,
-    is_system BOOLEAN DEFAULT FALSE,
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE,
-    FOREIGN KEY (role_id) REFERENCES roles(role_id) ON DELETE CASCADE
+CREATE TABLE "UserRoleMappings" (
+    "UserRoleMappingId" VARCHAR(64) PRIMARY KEY,
+    "UserId" VARCHAR(64) NOT NULL,
+    "RoleId" VARCHAR(64) NOT NULL,
+    "UnixTimestampCreated" BIGINT,
+    "UnixTimestampUpdated" BIGINT,
+    "IsDeleted" BOOLEAN DEFAULT TRUE,
+    "IsSystem" BOOLEAN DEFAULT FALSE,
+    "CreatedAt" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    "UpdatedAt" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY ("UserId") REFERENCES "Users"("UserId") ON DELETE CASCADE,
+    FOREIGN KEY ("RoleId") REFERENCES "Roles"("RoleId") ON DELETE CASCADE
 );
 
 -- ============================================================================
--- LOGIN_SESSIONS TABLE
+-- SESSION_LOGS TABLE
 -- ============================================================================
-CREATE TABLE session_logs (
-    session_id VARCHAR(64) PRIMARY KEY,
-    user_id VARCHAR(64) NOT NULL,
-    timestamp_logged_in TIMESTAMP WITH TIME ZONE,
-    timestamp_logged_out TIMESTAMP WITH TIME ZONE,
-    location coordinate_type,
-    is_deleted BOOLEAN DEFAULT TRUE,
-    is_system BOOLEAN DEFAULT FALSE,
-    timestamp_created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
+CREATE TABLE "SessionLogs" (
+    "SessionId" VARCHAR(64) PRIMARY KEY,
+    "UserId" VARCHAR(64) NOT NULL,
+    "TimestampLoggedIn" TIMESTAMP WITH TIME ZONE,
+    "TimestampLoggedOut" TIMESTAMP WITH TIME ZONE,
+    "Location" "CoordinateType",
+    "IsDeleted" BOOLEAN DEFAULT TRUE,
+    "IsSystem" BOOLEAN DEFAULT FALSE,
+    "TimestampCreatedAt" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY ("UserId") REFERENCES "Users"("UserId") ON DELETE CASCADE
 );
 
 -- ============================================================================
 -- TELEMETRY_DATA TABLE (Partitioned by time for better performance)
 -- ============================================================================
-CREATE TABLE telemetry_data (
-    telemetry_data_id VARCHAR(64) NOT NULL,
-    device_id VARCHAR(64) NOT NULL,
-    unix_timestamp BIGINT NOT NULL,
-    data_type telemetry_data_type_enum NOT NULL,
-    value_string VARCHAR(256),
-    value_number DOUBLE PRECISION,
-    value_boolean BOOLEAN,
-    value_location coordinate_type,
-    unit VARCHAR(32),
-    accuracy DOUBLE PRECISION,
-    precision_val DOUBLE PRECISION,
-    range_min DOUBLE PRECISION,
-    range_max DOUBLE PRECISION,
-    is_deleted BOOLEAN DEFAULT TRUE,
-    is_system BOOLEAN DEFAULT FALSE,
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    PRIMARY KEY (telemetry_data_id, unix_timestamp),
-    FOREIGN KEY (device_id) REFERENCES devices(device_id) ON DELETE CASCADE
-) PARTITION BY RANGE (unix_timestamp);
+CREATE TABLE "TelemetryData" (
+    "TelemetryDataId" VARCHAR(64) NOT NULL,
+    "DeviceId" VARCHAR(64) NOT NULL,
+    "UnixTimestamp" BIGINT NOT NULL,
+    "DataType" "TelemetryDataTypeEnum" NOT NULL,
+    "ValueString" VARCHAR(256),
+    "ValueNumber" DOUBLE PRECISION,
+    "ValueBoolean" BOOLEAN,
+    "ValueLocation" "CoordinateType",
+    "Unit" VARCHAR(32),
+    "Accuracy" DOUBLE PRECISION,
+    "PrecisionVal" DOUBLE PRECISION,
+    "RangeMin" DOUBLE PRECISION,
+    "RangeMax" DOUBLE PRECISION,
+    "IsDeleted" BOOLEAN DEFAULT TRUE,
+    "IsSystem" BOOLEAN DEFAULT FALSE,
+    "CreatedAt" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY ("TelemetryDataId", "UnixTimestamp"),
+    FOREIGN KEY ("DeviceId") REFERENCES "Devices"("DeviceId") ON DELETE CASCADE
+) PARTITION BY RANGE ("UnixTimestamp");
 
 -- Create monthly partitions for telemetry data (example for 2024-2025)
 -- You can create more partitions as needed
-CREATE TABLE telemetry_data_2024_01 PARTITION OF telemetry_data
+CREATE TABLE "TelemetryData202401" PARTITION OF "TelemetryData"
     FOR VALUES FROM (1704067200) TO (1706745599); -- Jan 2024
 
-CREATE TABLE telemetry_data_2024_02 PARTITION OF telemetry_data
+CREATE TABLE "TelemetryData202402" PARTITION OF "TelemetryData"
     FOR VALUES FROM (1706745600) TO (1709251199); -- Feb 2024
 
 -- Add more partition tables as needed...
@@ -470,47 +470,47 @@ CREATE TABLE telemetry_data_2024_02 PARTITION OF telemetry_data
 -- ============================================================================
 -- ALARMS TABLE
 -- ============================================================================
-CREATE TABLE alarms (
-    alarm_id VARCHAR(64) PRIMARY KEY,
-    device_id VARCHAR(64) NOT NULL,
-    unix_timestamp BIGINT NOT NULL,
-    alarm_type alarm_type_enum NOT NULL,
-    description VARCHAR(256),
-    related_telemetry_count INTEGER DEFAULT 0,
-    is_deleted BOOLEAN DEFAULT TRUE,
-    is_system BOOLEAN DEFAULT FALSE,
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (device_id) REFERENCES devices(device_id) ON DELETE CASCADE
+CREATE TABLE "Alarms" (
+    "AlarmId" VARCHAR(64) PRIMARY KEY,
+    "DeviceId" VARCHAR(64) NOT NULL,
+    "UnixTimestamp" BIGINT NOT NULL,
+    "AlarmType" "AlarmTypeEnum" NOT NULL,
+    "Description" VARCHAR(256),
+    "RelatedTelemetryCount" INTEGER DEFAULT 0,
+    "IsDeleted" BOOLEAN DEFAULT TRUE,
+    "IsSystem" BOOLEAN DEFAULT FALSE,
+    "CreatedAt" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    "UpdatedAt" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY ("DeviceId") REFERENCES "Devices"("DeviceId") ON DELETE CASCADE
 );
 
 -- ============================================================================
 -- ALARM_TELEMETRY_RELATIONS TABLE (Junction table for alarm-telemetry relationship)
 -- ============================================================================
-CREATE TABLE alarm_telemetry_relations (
-    id SERIAL PRIMARY KEY,
-    alarm_id VARCHAR(64) NOT NULL,
-    telemetry_data_id VARCHAR(64) NOT NULL,
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (alarm_id) REFERENCES alarms(alarm_id) ON DELETE CASCADE
-    -- Note: FK to telemetry_data is complex due to partitioning
+CREATE TABLE "AlarmTelemetryRelations" (
+    "Id" SERIAL PRIMARY KEY,
+    "AlarmId" VARCHAR(64) NOT NULL,
+    "TelemetryDataId" VARCHAR(64) NOT NULL,
+    "CreatedAt" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY ("AlarmId") REFERENCES "Alarms"("AlarmId") ON DELETE CASCADE
+    -- Note: FK to "TelemetryData" is complex due to partitioning
 );
 
 -- ============================================================================
 -- NOTIFICATIONS TABLE
 -- ============================================================================
-CREATE TABLE notifications (
-    notification_id VARCHAR(64) PRIMARY KEY,
-    user_id VARCHAR(64) NOT NULL,
-    unix_timestamp BIGINT NOT NULL,
-    notification_type notification_type_enum NOT NULL,
-    description VARCHAR(256),
-    is_read BOOLEAN DEFAULT FALSE,
-    is_deleted BOOLEAN DEFAULT TRUE,
-    is_system BOOLEAN DEFAULT FALSE,
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
+CREATE TABLE "Notifications" (
+    "NotificationId" VARCHAR(64) PRIMARY KEY,
+    "UserId" VARCHAR(64) NOT NULL,
+    "UnixTimestamp" BIGINT NOT NULL,
+    "NotificationType" "NotificationTypeEnum" NOT NULL,
+    "Description" VARCHAR(256),
+    "IsRead" BOOLEAN DEFAULT FALSE,
+    "IsDeleted" BOOLEAN DEFAULT TRUE,
+    "IsSystem" BOOLEAN DEFAULT FALSE,
+    "CreatedAt" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    "UpdatedAt" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY ("UserId") REFERENCES "Users"("UserId") ON DELETE CASCADE
 );
 
 -- ============================================================================
@@ -518,168 +518,485 @@ CREATE TABLE notifications (
 -- ============================================================================
 
 -- Enterprise indexes
-CREATE INDEX idx_enterprises_is_deleted ON enterprises(is_deleted);
-CREATE INDEX idx_enterprises_created_at ON enterprises(created_at);
+CREATE INDEX "IdxEnterprisesIsDeleted" ON "Enterprises"("IsDeleted");
+CREATE INDEX "IdxEnterprisesCreatedAt" ON "Enterprises"("CreatedAt");
 
 -- User indexes
-CREATE INDEX idx_users_enterprise_id ON users(enterprise_id);
-CREATE INDEX idx_users_is_deleted ON users(is_deleted);
-CREATE INDEX idx_users_email ON users(email);
-CREATE INDEX idx_users_created_at ON users(created_at);
+CREATE INDEX "IdxUsersEnterpriseId" ON "Users"("EnterpriseId");
+CREATE INDEX "IdxUsersIsDeleted" ON "Users"("IsDeleted");
+CREATE INDEX "IdxUsersEmail" ON "Users"("Email");
+CREATE INDEX "IdxUsersCreatedAt" ON "Users"("CreatedAt");
 
 -- Cluster indexes
-CREATE INDEX idx_clusters_enterprise_id ON clusters(enterprise_id);
-CREATE INDEX idx_clusters_is_deleted ON clusters(is_deleted);
+CREATE INDEX "IdxClustersEnterpriseId" ON "Clusters"("EnterpriseId");
+CREATE INDEX "IdxClustersIsDeleted" ON "Clusters"("IsDeleted");
 
 -- Site indexes
-CREATE INDEX idx_sites_cluster_id ON sites(cluster_id);
-CREATE INDEX idx_sites_site_type ON sites(site_type);
-CREATE INDEX idx_sites_is_deleted ON sites(is_deleted);
+CREATE INDEX "IdxSitesClusterId" ON "Sites"("ClusterId");
+CREATE INDEX "IdxSitesSiteType" ON "Sites"("SiteType");
+CREATE INDEX "IdxSitesIsDeleted" ON "Sites"("IsDeleted");
 
 -- Level indexes
-CREATE INDEX idx_levels_site_id ON levels(site_id);
-CREATE INDEX idx_levels_level_number ON levels(level_number);
-CREATE INDEX idx_levels_is_deleted ON levels(is_deleted);
+CREATE INDEX "IdxLevelsSiteId" ON "Levels"("SiteId");
+CREATE INDEX "IdxLevelsLevelNumber" ON "Levels"("LevelNumber");
+CREATE INDEX "IdxLevelsIsDeleted" ON "Levels"("IsDeleted");
 
 -- Zone indexes
-CREATE INDEX idx_zones_level_id ON zones(level_id);
-CREATE INDEX idx_zones_is_deleted ON zones(is_deleted);
+CREATE INDEX "IdxZonesLevelId" ON "Zones"("LevelId");
+CREATE INDEX "IdxZonesIsDeleted" ON "Zones"("IsDeleted");
 
 -- Device indexes
-CREATE INDEX idx_devices_device_type ON devices(device_type);
-CREATE INDEX idx_devices_device_sub_type ON devices(device_sub_type);
-CREATE INDEX idx_devices_manufacturer ON devices(manufacturer);
-CREATE INDEX idx_devices_is_deleted_connected ON devices(is_deleted, is_connected);
-CREATE INDEX idx_devices_serial_no ON devices(serial_no);
-CREATE INDEX idx_devices_created_at ON devices(created_at);
+CREATE INDEX "IdxDevicesDeviceType" ON "Devices"("DeviceType");
+CREATE INDEX "IdxDevicesDeviceSubType" ON "Devices"("DeviceSubType");
+CREATE INDEX "IdxDevicesManufacturer" ON "Devices"("Manufacturer");
+CREATE INDEX "IdxDevicesIsDeletedConnected" ON "Devices"("IsDeleted", "IsConnected");
+CREATE INDEX "IdxDevicesSerialNo" ON "Devices"("SerialNo");
+CREATE INDEX "IdxDevicesCreatedAt" ON "Devices"("CreatedAt");
 
 -- Asset indexes
-CREATE INDEX idx_assets_site_id ON assets(site_id);
-CREATE INDEX idx_assets_level_id ON assets(level_id);
-CREATE INDEX idx_assets_category ON assets(category_id, subcategory_id);
-CREATE INDEX idx_assets_is_deleted ON assets(is_deleted);
+CREATE INDEX "IdxAssetsSiteId" ON "Assets"("SiteId");
+CREATE INDEX "IdxAssetsLevelId" ON "Assets"("LevelId");
+CREATE INDEX "IdxAssetsCategory" ON "Assets"("CategoryId", "SubcategoryId");
+CREATE INDEX "IdxAssetsIsDeleted" ON "Assets"("IsDeleted");
 
--- Asset sensor mapping indexes
-CREATE INDEX idx_asset_sensor_mappings_asset_id ON asset_sensor_mappings(asset_id);
-CREATE INDEX idx_asset_sensor_mappings_is_deleted ON asset_sensor_mappings(is_deleted);
-CREATE INDEX idx_asset_sensors_device_id ON asset_sensors(device_id);
+-- Asset device mapping indexes
+CREATE INDEX "IdxAssetDeviceMappingsAssetId" ON "AssetDeviceMappings"("AssetId");
+CREATE INDEX "IdxAssetDeviceMappingsIsDeleted" ON "AssetDeviceMappings"("IsDeleted");
+CREATE INDEX "IdxAssetDevicesDeviceId" ON "AssetDevices"("DeviceId");
 
 -- Device hierarchy indexes
-CREATE INDEX idx_device_hierarchies_parent_id ON device_hierarchies(parent_device_id);
-CREATE INDEX idx_device_hierarchies_child_id ON device_hierarchies(child_device_id);
-CREATE INDEX idx_device_hierarchies_is_deleted ON device_hierarchies(is_deleted);
+CREATE INDEX "IdxDeviceHierarchiesParentId" ON "DeviceHierarchies"("ParentDeviceId");
+CREATE INDEX "IdxDeviceHierarchiesChildId" ON "DeviceHierarchies"("ChildDeviceId");
+CREATE INDEX "IdxDeviceHierarchiesIsDeleted" ON "DeviceHierarchies"("IsDeleted");
 
 -- Device permission indexes
-CREATE INDEX idx_device_permissions_device_user ON device_permissions(device_id, user_id);
-CREATE INDEX idx_device_permissions_user_id ON device_permissions(user_id);
-CREATE INDEX idx_device_permissions_is_deleted ON device_permissions(is_deleted);
+CREATE INDEX "IdxDevicePermissionsDeviceUser" ON "DevicePermissions"("DeviceId", "UserId");
+CREATE INDEX "IdxDevicePermissionsUserId" ON "DevicePermissions"("UserId");
+CREATE INDEX "IdxDevicePermissionsIsDeleted" ON "DevicePermissions"("IsDeleted");
 
 -- Device attribute indexes
-CREATE INDEX idx_device_attributes_device_id ON device_attributes(device_id);
-CREATE INDEX idx_device_attributes_attribute_type ON device_attributes(attribute_type);
-CREATE INDEX idx_device_attributes_is_deleted ON device_attributes(is_deleted);
+CREATE INDEX "IdxDeviceAttributesDeviceId" ON "DeviceAttributes"("DeviceId");
+CREATE INDEX "IdxDeviceAttributesAttributeType" ON "DeviceAttributes"("AttributeType");
+CREATE INDEX "IdxDeviceAttributesIsDeleted" ON "DeviceAttributes"("IsDeleted");
 
 -- Application indexes
-CREATE INDEX idx_applications_category ON applications(category_id, subcategory_id);
-CREATE INDEX idx_applications_vendor ON applications(vendor);
-CREATE INDEX idx_applications_is_deleted ON applications(is_deleted);
+CREATE INDEX "IdxApplicationsCategory" ON "Applications"("CategoryId", "SubcategoryId");
+CREATE INDEX "IdxApplicationsVendor" ON "Applications"("Vendor");
+CREATE INDEX "IdxApplicationsIsDeleted" ON "Applications"("IsDeleted");
 
 -- Feature indexes
-CREATE INDEX idx_features_application_id ON features(application_id);
-CREATE INDEX idx_features_is_deleted ON features(is_deleted);
+CREATE INDEX "IdxFeaturesApplicationId" ON "Features"("ApplicationId");
+CREATE INDEX "IdxFeaturesIsDeleted" ON "Features"("IsDeleted");
 
 -- Rule indexes
-CREATE INDEX idx_rules_rule_type ON rules(rule_type);
-CREATE INDEX idx_rules_priority ON rules(priority);
-CREATE INDEX idx_rules_is_deleted ON rules(is_deleted);
+CREATE INDEX "IdxRulesRuleType" ON "Rules"("RuleType");
+CREATE INDEX "IdxRulesPriority" ON "Rules"("Priority");
+CREATE INDEX "IdxRulesIsDeleted" ON "Rules"("IsDeleted");
 
 -- Application permission indexes
-CREATE INDEX idx_app_permissions_app_user ON application_permissions(application_id, user_id);
-CREATE INDEX idx_app_permissions_user_id ON application_permissions(user_id);
-CREATE INDEX idx_app_permissions_is_deleted ON application_permissions(is_deleted);
+CREATE INDEX "IdxAppPermissionsAppUser" ON "ApplicationPermissions"("ApplicationId", "UserId");
+CREATE INDEX "IdxAppPermissionsUserId" ON "ApplicationPermissions"("UserId");
+CREATE INDEX "IdxAppPermissionsIsDeleted" ON "ApplicationPermissions"("IsDeleted");
 
 -- Role indexes
-CREATE INDEX idx_roles_is_deleted ON roles(is_deleted);
+CREATE INDEX "IdxRolesIsDeleted" ON "Roles"("IsDeleted");
 
 -- User role mapping indexes
-CREATE INDEX idx_user_role_mappings_user_id ON user_role_mappings(user_id);
-CREATE INDEX idx_user_role_mappings_role_id ON user_role_mappings(role_id);
-CREATE INDEX idx_user_role_mappings_is_deleted ON user_role_mappings(is_deleted);
+CREATE INDEX "IdxUserRoleMappingsUserId" ON "UserRoleMappings"("UserId");
+CREATE INDEX "IdxUserRoleMappingsRoleId" ON "UserRoleMappings"("RoleId");
+CREATE INDEX "IdxUserRoleMappingsIsDeleted" ON "UserRoleMappings"("IsDeleted");
 
--- Login session indexes
-CREATE INDEX idx_session_logs_user_id ON session_logs(user_id);
-CREATE INDEX idx_session_logs_expires ON session_logs(timestamp_created_at);
-CREATE INDEX idx_session_logs_is_deleted ON session_logs(is_deleted);
+-- Session logs indexes
+CREATE INDEX "IdxSessionLogsUserId" ON "SessionLogs"("UserId");
+CREATE INDEX "IdxSessionLogsExpires" ON "SessionLogs"("TimestampCreatedAt");
+CREATE INDEX "IdxSessionLogsIsDeleted" ON "SessionLogs"("IsDeleted");
 
 -- Telemetry data indexes (Critical for IoT performance)
-CREATE INDEX idx_telemetry_device_timestamp ON telemetry_data(device_id, unix_timestamp DESC);
-CREATE INDEX idx_telemetry_timestamp ON telemetry_data(unix_timestamp DESC);
-CREATE INDEX idx_telemetry_data_type ON telemetry_data(data_type);
-CREATE INDEX idx_telemetry_is_deleted ON telemetry_data(is_deleted);
-CREATE INDEX idx_telemetry_device_type_timestamp ON telemetry_data(device_id, data_type, unix_timestamp DESC);
+CREATE INDEX "IdxTelemetryDeviceTimestamp" ON "TelemetryData"("DeviceId", "UnixTimestamp" DESC);
+CREATE INDEX "IdxTelemetryTimestamp" ON "TelemetryData"("UnixTimestamp" DESC);
+CREATE INDEX "IdxTelemetryDataType" ON "TelemetryData"("DataType");
+CREATE INDEX "IdxTelemetryIsDeleted" ON "TelemetryData"("IsDeleted");
+CREATE INDEX "IdxTelemetryDeviceTypeTimestamp" ON "TelemetryData"("DeviceId", "DataType", "UnixTimestamp" DESC);
 
 -- Alarm indexes
-CREATE INDEX idx_alarms_device_timestamp ON alarms(device_id, unix_timestamp DESC);
-CREATE INDEX idx_alarms_alarm_type_timestamp ON alarms(alarm_type, unix_timestamp DESC);
-CREATE INDEX idx_alarms_timestamp ON alarms(unix_timestamp DESC);
-CREATE INDEX idx_alarms_is_deleted ON alarms(is_deleted);
+CREATE INDEX "IdxAlarmsDeviceTimestamp" ON "Alarms"("DeviceId", "UnixTimestamp" DESC);
+CREATE INDEX "IdxAlarmsAlarmTypeTimestamp" ON "Alarms"("AlarmType", "UnixTimestamp" DESC);
+CREATE INDEX "IdxAlarmsTimestamp" ON "Alarms"("UnixTimestamp" DESC);
+CREATE INDEX "IdxAlarmsIsDeleted" ON "Alarms"("IsDeleted");
 
 -- Notification indexes
-CREATE INDEX idx_notifications_user_timestamp ON notifications(user_id, unix_timestamp DESC);
-CREATE INDEX idx_notifications_user_read ON notifications(user_id, is_read);
-CREATE INDEX idx_notifications_type_timestamp ON notifications(notification_type, unix_timestamp DESC);
-CREATE INDEX idx_notifications_is_deleted ON notifications(is_deleted);
+CREATE INDEX "IdxNotificationsUserTimestamp" ON "Notifications"("UserId", "UnixTimestamp" DESC);
+CREATE INDEX "IdxNotificationsUserRead" ON "Notifications"("UserId", "IsRead");
+CREATE INDEX "IdxNotificationsTypeTimestamp" ON "Notifications"("NotificationType", "UnixTimestamp" DESC);
+CREATE INDEX "IdxNotificationsIsDeleted" ON "Notifications"("IsDeleted");
 
 -- ============================================================================
 -- CREATE FUNCTIONS AND TRIGGERS FOR AUTOMATIC TIMESTAMP UPDATES
 -- ============================================================================
 
--- Function to update the updated_at column
-CREATE OR REPLACE FUNCTION update_updated_at_column()
-RETURNS TRIGGER AS $$
+-- Function to update the "UpdatedAt" column
+CREATE OR REPLACE FUNCTION "UpdateUpdatedAtColumn"()
+RETURNS TRIGGER AS $
 BEGIN
-    NEW.updated_at = CURRENT_TIMESTAMP;
+    NEW."UpdatedAt" = CURRENT_TIMESTAMP;
     RETURN NEW;
 END;
-$$ language 'plpgsql';
+$ language 'plpgsql';
 
--- Create triggers for all tables with updated_at columns
-CREATE TRIGGER update_enterprises_updated_at BEFORE UPDATE ON enterprises FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
-CREATE TRIGGER update_users_updated_at BEFORE UPDATE ON users FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
-CREATE TRIGGER update_clusters_updated_at BEFORE UPDATE ON clusters FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
-CREATE TRIGGER update_sites_updated_at BEFORE UPDATE ON sites FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
-CREATE TRIGGER update_areas_updated_at BEFORE UPDATE ON areas FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
-CREATE TRIGGER update_levels_updated_at BEFORE UPDATE ON levels FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
-CREATE TRIGGER update_zones_updated_at BEFORE UPDATE ON zones FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
-CREATE TRIGGER update_devices_updated_at BEFORE UPDATE ON devices FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
-CREATE TRIGGER update_assets_updated_at BEFORE UPDATE ON assets FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
-CREATE TRIGGER update_asset_device_mappings_updated_at BEFORE UPDATE ON asset_device_mappings FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
-CREATE TRIGGER update_device_hierarchies_updated_at BEFORE UPDATE ON device_hierarchies FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
-CREATE TRIGGER update_device_permissions_updated_at BEFORE UPDATE ON device_permissions FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
-CREATE TRIGGER update_device_attributes_updated_at BEFORE UPDATE ON device_attributes FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
-CREATE TRIGGER update_applications_updated_at BEFORE UPDATE ON applications FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
-CREATE TRIGGER update_features_updated_at BEFORE UPDATE ON features FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
-CREATE TRIGGER update_rules_updated_at BEFORE UPDATE ON rules FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
-CREATE TRIGGER update_application_permissions_updated_at BEFORE UPDATE ON application_permissions FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
-CREATE TRIGGER update_roles_updated_at BEFORE UPDATE ON roles FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
-CREATE TRIGGER update_user_role_mappings_updated_at BEFORE UPDATE ON user_role_mappings FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
-CREATE TRIGGER update_session_logs_updated_at BEFORE UPDATE ON session_logs FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
-CREATE TRIGGER update_alarms_updated_at BEFORE UPDATE ON alarms FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
-CREATE TRIGGER update_notifications_updated_at BEFORE UPDATE ON notifications FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+-- Create triggers for all tables with "UpdatedAt" columns
+CREATE TRIGGER "UpdateEnterprisesUpdatedAt" BEFORE UPDATE ON "Enterprises" FOR EACH ROW EXECUTE FUNCTION "UpdateUpdatedAtColumn"();
+CREATE TRIGGER "UpdateUsersUpdatedAt" BEFORE UPDATE ON "Users" FOR EACH ROW EXECUTE FUNCTION "UpdateUpdatedAtColumn"();
+CREATE TRIGGER "UpdateClustersUpdatedAt" BEFORE UPDATE ON "Clusters" FOR EACH ROW EXECUTE FUNCTION "UpdateUpdatedAtColumn"();
+CREATE TRIGGER "UpdateSitesUpdatedAt" BEFORE UPDATE ON "Sites" FOR EACH ROW EXECUTE FUNCTION "UpdateUpdatedAtColumn"();
+CREATE TRIGGER "UpdateAreasUpdatedAt" BEFORE UPDATE ON "Areas" FOR EACH ROW EXECUTE FUNCTION "UpdateUpdatedAtColumn"();
+CREATE TRIGGER "UpdateLevelsUpdatedAt" BEFORE UPDATE ON "Levels" FOR EACH ROW EXECUTE FUNCTION "UpdateUpdatedAtColumn"();
+CREATE TRIGGER "UpdateZonesUpdatedAt" BEFORE UPDATE ON "Zones" FOR EACH ROW EXECUTE FUNCTION "UpdateUpdatedAtColumn"();
+CREATE TRIGGER "UpdateDevicesUpdatedAt" BEFORE UPDATE ON "Devices" FOR EACH ROW EXECUTE FUNCTION "UpdateUpdatedAtColumn"();
+CREATE TRIGGER "UpdateAssetsUpdatedAt" BEFORE UPDATE ON "Assets" FOR EACH ROW EXECUTE FUNCTION "UpdateUpdatedAtColumn"();
+CREATE TRIGGER "UpdateAssetDeviceMappingsUpdatedAt" BEFORE UPDATE ON "AssetDeviceMappings" FOR EACH ROW EXECUTE FUNCTION "UpdateUpdatedAtColumn"();
+CREATE TRIGGER "UpdateDeviceHierarchiesUpdatedAt" BEFORE UPDATE ON "DeviceHierarchies" FOR EACH ROW EXECUTE FUNCTION "UpdateUpdatedAtColumn"();
+CREATE TRIGGER "UpdateDevicePermissionsUpdatedAt" BEFORE UPDATE ON "DevicePermissions" FOR EACH ROW EXECUTE FUNCTION "UpdateUpdatedAtColumn"();
+CREATE TRIGGER "UpdateDeviceAttributesUpdatedAt" BEFORE UPDATE ON "DeviceAttributes" FOR EACH ROW EXECUTE FUNCTION "UpdateUpdatedAtColumn"();
+CREATE TRIGGER "UpdateApplicationsUpdatedAt" BEFORE UPDATE ON "Applications" FOR EACH ROW EXECUTE FUNCTION "UpdateUpdatedAtColumn"();
+CREATE TRIGGER "UpdateFeaturesUpdatedAt" BEFORE UPDATE ON "Features" FOR EACH ROW EXECUTE FUNCTION "UpdateUpdatedAtColumn"();
+CREATE TRIGGER "UpdateRulesUpdatedAt" BEFORE UPDATE ON "Rules" FOR EACH ROW EXECUTE FUNCTION "UpdateUpdatedAtColumn"();
+CREATE TRIGGER "UpdateApplicationPermissionsUpdatedAt" BEFORE UPDATE ON "ApplicationPermissions" FOR EACH ROW EXECUTE FUNCTION "UpdateUpdatedAtColumn"();
+CREATE TRIGGER "UpdateRolesUpdatedAt" BEFORE UPDATE ON "Roles" FOR EACH ROW EXECUTE FUNCTION "UpdateUpdatedAtColumn"();
+CREATE TRIGGER "UpdateUserRoleMappingsUpdatedAt" BEFORE UPDATE ON "UserRoleMappings" FOR EACH ROW EXECUTE FUNCTION "UpdateUpdatedAtColumn"();
+CREATE TRIGGER "UpdateSessionLogsUpdatedAt" BEFORE UPDATE ON "SessionLogs" FOR EACH ROW EXECUTE FUNCTION "UpdateUpdatedAtColumn"();
+CREATE TRIGGER "UpdateAlarmsUpdatedAt" BEFORE UPDATE ON "Alarms" FOR EACH ROW EXECUTE FUNCTION "UpdateUpdatedAtColumn"();
+CREATE TRIGGER "UpdateNotificationsUpdatedAt" BEFORE UPDATE ON "Notifications" FOR EACH ROW EXECUTE FUNCTION "UpdateUpdatedAtColumn"();
 
 -- ============================================================================
 -- CREATE VIEWS FOR COMMON QUERIES
 -- ============================================================================
 
 -- View for active devices with their hierarchies
-CREATE VIEW active_devices_with_hierarchy AS
+CREATE VIEW "ActiveDevicesWithHierarchy" AS
 SELECT 
-    d.device_id,
-    d.device_name,
-    d.device_type,
-    d.device_sub_type,
-    d.is_connected,
-    dh.parent_device_id,
-    pd.device_name as parent_device_name
-FROM devices d
-LEFT JOIN device_hierarchies;
+    d."DeviceId",
+    d."DeviceName",
+    d."DeviceType",
+    d."DeviceSubType",
+    d."IsConnected",
+    dh."ParentDeviceId",
+    pd."DeviceName" AS "ParentDeviceName"
+FROM "Devices" d
+LEFT JOIN "DeviceHierarchies" dh ON d."DeviceId" = dh."ChildDeviceId" AND dh."IsDeleted" = FALSE
+LEFT JOIN "Devices" pd ON dh."ParentDeviceId" = pd."DeviceId"
+WHERE d."IsDeleted" = FALSE;
+
+-- View for user permissions across devices and applications
+CREATE VIEW "UserPermissionsSummary" AS
+SELECT 
+    u."UserId",
+    u."UserName",
+    u."Email",
+    'DEVICE' AS "PermissionScope",
+    dp."DeviceId" AS "ScopeId",
+    d."DeviceName" AS "ScopeName",
+    dp."PermissionType"
+FROM "Users" u
+JOIN "DevicePermissions" dp ON u."UserId" = dp."UserId"
+JOIN "Devices" d ON dp."DeviceId" = d."DeviceId"
+WHERE u."IsDeleted" = FALSE AND dp."IsDeleted" = FALSE AND d."IsDeleted" = FALSE
+
+UNION ALL
+
+SELECT 
+    u."UserId",
+    u."UserName",
+    u."Email",
+    'APPLICATION' AS "PermissionScope",
+    ap."ApplicationId" AS "ScopeId",
+    a."ApplicationName" AS "ScopeName",
+    ap."PermissionType"
+FROM "Users" u
+JOIN "ApplicationPermissions" ap ON u."UserId" = ap."UserId"
+JOIN "Applications" a ON ap."ApplicationId" = a."ApplicationId"
+WHERE u."IsDeleted" = FALSE AND ap."IsDeleted" = FALSE AND a."IsDeleted" = FALSE;
+
+-- View for enterprise hierarchy
+CREATE VIEW "EnterpriseHierarchy" AS
+SELECT 
+    e."EnterpriseId",
+    e."EnterpriseName",
+    c."ClusterId",
+    c."ClusterName",
+    s."SiteId",
+    s."SiteName",
+    s."SiteType",
+    l."LevelId",
+    l."LevelName",
+    l."LevelNumber"
+FROM "Enterprises" e
+LEFT JOIN "Clusters" c ON e."EnterpriseId" = c."EnterpriseId" AND c."IsDeleted" = FALSE
+LEFT JOIN "Sites" s ON c."ClusterId" = s."ClusterId" AND s."IsDeleted" = FALSE
+LEFT JOIN "Levels" l ON s."SiteId" = l."SiteId" AND l."IsDeleted" = FALSE
+WHERE e."IsDeleted" = FALSE;
+
+-- View for recent alarms with device information
+CREATE VIEW "RecentAlarmsWithDevices" AS
+SELECT 
+    a."AlarmId",
+    a."DeviceId",
+    d."DeviceName",
+    d."DeviceType",
+    d."Manufacturer",
+    a."AlarmType",
+    a."Description",
+    a."UnixTimestamp",
+    a."CreatedAt"
+FROM "Alarms" a
+JOIN "Devices" d ON a."DeviceId" = d."DeviceId"
+WHERE a."IsDeleted" = FALSE AND d."IsDeleted" = FALSE
+ORDER BY a."UnixTimestamp" DESC;
+
+-- View for telemetry data with device context
+CREATE VIEW "TelemetryDataWithDeviceContext" AS
+SELECT 
+    td."TelemetryDataId",
+    td."DeviceId",
+    d."DeviceName",
+    d."DeviceType",
+    d."DeviceSubType",
+    d."Manufacturer",
+    td."UnixTimestamp",
+    td."DataType",
+    td."ValueString",
+    td."ValueNumber",
+    td."ValueBoolean",
+    td."ValueLocation",
+    td."Unit",
+    td."CreatedAt"
+FROM "TelemetryData" td
+JOIN "Devices" d ON td."DeviceId" = d."DeviceId"
+WHERE td."IsDeleted" = FALSE AND d."IsDeleted" = FALSE;
+
+-- ============================================================================
+-- ADDITIONAL UTILITY FUNCTIONS
+-- ============================================================================
+
+-- Function to get device count by type for an enterprise
+CREATE OR REPLACE FUNCTION "GetDeviceCountByType"("EnterpriseIdParam" VARCHAR(64))
+RETURNS TABLE("DeviceType" "DeviceTypeEnum", "DeviceCount" BIGINT) AS $$
+BEGIN
+    RETURN QUERY
+    SELECT 
+        d."DeviceType",
+        COUNT(*)::BIGINT AS "DeviceCount"
+    FROM "Devices" d
+    JOIN "AssetDevices" ad ON d."DeviceId" = ad."DeviceId"
+    JOIN "AssetDeviceMappings" adm ON ad."AssetDeviceMappingId" = adm."AssetDeviceMappingId"
+    JOIN "Assets" a ON adm."AssetId" = a."AssetId"
+    JOIN "Sites" s ON a."SiteId" = s."SiteId"
+    JOIN "Clusters" c ON s."ClusterId" = c."ClusterId"
+    WHERE c."EnterpriseId" = "EnterpriseIdParam"
+    AND d."IsDeleted" = FALSE
+    AND a."IsDeleted" = FALSE
+    AND s."IsDeleted" = FALSE
+    AND c."IsDeleted" = FALSE
+    GROUP BY d."DeviceType";
+END;
+$$ LANGUAGE plpgsql;
+
+-- Function to get active alarms count for a device
+CREATE OR REPLACE FUNCTION "GetActiveAlarmCount"("DeviceIdParam" VARCHAR(64))
+RETURNS INTEGER AS $$
+DECLARE
+    "AlarmCount" INTEGER;
+BEGIN
+    SELECT COUNT(*)::INTEGER INTO "AlarmCount"
+    FROM "Alarms"
+    WHERE "DeviceId" = "DeviceIdParam"
+    AND "IsDeleted" = FALSE;
+    
+    RETURN COALESCE("AlarmCount", 0);
+END;
+$$ LANGUAGE plpgsql;
+
+-- Function to get latest telemetry value for a device
+CREATE OR REPLACE FUNCTION "GetLatestTelemetryValue"(
+    "DeviceIdParam" VARCHAR(64),
+    "DataTypeParam" "TelemetryDataTypeEnum"
+)
+RETURNS TABLE(
+    "ValueString" VARCHAR(256),
+    "ValueNumber" DOUBLE PRECISION,
+    "ValueBoolean" BOOLEAN,
+    "ValueLocation" "CoordinateType",
+    "UnixTimestamp" BIGINT
+) AS $$
+BEGIN
+    RETURN QUERY
+    SELECT 
+        td."ValueString",
+        td."ValueNumber",
+        td."ValueBoolean",
+        td."ValueLocation",
+        td."UnixTimestamp"
+    FROM "TelemetryData" td
+    WHERE td."DeviceId" = "DeviceIdParam"
+    AND td."DataType" = "DataTypeParam"
+    AND td."IsDeleted" = FALSE
+    ORDER BY td."UnixTimestamp" DESC
+    LIMIT 1;
+END;
+$$ LANGUAGE plpgsql;
+
+-- ============================================================================
+-- PERFORMANCE OPTIMIZATION HINTS
+-- ============================================================================
+
+-- Consider creating additional partial indexes for frequently queried conditions
+-- Example partial indexes for better performance on active/non-deleted records:
+
+-- CREATE INDEX "IdxDevicesActiveConnected" ON "Devices"("DeviceId") WHERE "IsDeleted" = FALSE AND "IsConnected" = TRUE;
+-- CREATE INDEX "IdxTelemetryDataRecent" ON "TelemetryData"("DeviceId", "UnixTimestamp" DESC) WHERE "IsDeleted" = FALSE AND "UnixTimestamp" > (EXTRACT(EPOCH FROM NOW() - INTERVAL '30 days'))::BIGINT;
+-- CREATE INDEX "IdxAlarmsRecentCritical" ON "Alarms"("DeviceId", "UnixTimestamp" DESC) WHERE "IsDeleted" = FALSE AND "AlarmType" = 'C';
+
+-- ============================================================================
+-- CLEANUP AND MAINTENANCE PROCEDURES
+-- ============================================================================
+
+-- Procedure to clean up old telemetry data (older than specified days)
+CREATE OR REPLACE FUNCTION "CleanupOldTelemetryData"("DaysToKeep" INTEGER DEFAULT 90)
+RETURNS VOID AS $$
+DECLARE
+    "CutoffTimestamp" BIGINT;
+    "DeletedRows" INTEGER;
+BEGIN
+    "CutoffTimestamp" := (EXTRACT(EPOCH FROM NOW() - ("DaysToKeep" || ' days')::INTERVAL))::BIGINT;
+    
+    UPDATE "TelemetryData" 
+    SET "IsDeleted" = TRUE 
+    WHERE "UnixTimestamp" < "CutoffTimestamp" 
+    AND "IsDeleted" = FALSE;
+    
+    GET DIAGNOSTICS "DeletedRows" = ROW_COUNT;
+    RAISE NOTICE 'Marked % telemetry records as deleted (older than % days)', "DeletedRows", "DaysToKeep";
+END;
+$$ LANGUAGE plpgsql;
+
+-- Procedure to update device connection status based on latest telemetry
+CREATE OR REPLACE FUNCTION "UpdateDeviceConnectionStatus"()
+RETURNS VOID AS $$
+DECLARE
+    "ThresholdTimestamp" BIGINT;
+    "UpdatedRows" INTEGER;
+BEGIN
+    -- Consider devices disconnected if no telemetry in last 5 minutes
+    "ThresholdTimestamp" := (EXTRACT(EPOCH FROM NOW() - INTERVAL '5 minutes'))::BIGINT;
+    
+    -- Mark devices as disconnected if no recent telemetry
+    UPDATE "Devices" 
+    SET "IsConnected" = FALSE,
+        "UpdatedAt" = CURRENT_TIMESTAMP
+    WHERE "IsConnected" = TRUE 
+    AND "IsDeleted" = FALSE
+    AND "DeviceId" NOT IN (
+        SELECT DISTINCT "DeviceId" 
+        FROM "TelemetryData" 
+        WHERE "UnixTimestamp" > "ThresholdTimestamp" 
+        AND "IsDeleted" = FALSE
+    );
+    
+    GET DIAGNOSTICS "UpdatedRows" = ROW_COUNT;
+    RAISE NOTICE 'Updated connection status for % devices', "UpdatedRows";
+END;
+$$ LANGUAGE plpgsql;
+
+-- ============================================================================
+-- SAMPLE DATA INSERTION FUNCTIONS (FOR TESTING)
+-- ============================================================================
+
+-- Function to create sample enterprise with hierarchy
+CREATE OR REPLACE FUNCTION "CreateSampleEnterpriseData"()
+RETURNS VARCHAR(64) AS $$
+DECLARE
+    "SampleEnterpriseId" VARCHAR(64);
+    "SampleClusterId" VARCHAR(64);
+    "SampleSiteId" VARCHAR(64);
+    "SampleLevelId" VARCHAR(64);
+BEGIN
+    -- Generate IDs
+    "SampleEnterpriseId" := 'ENT_' || EXTRACT(EPOCH FROM NOW())::BIGINT::TEXT;
+    "SampleClusterId" := 'CLU_' || EXTRACT(EPOCH FROM NOW())::BIGINT::TEXT;
+    "SampleSiteId" := 'SIT_' || EXTRACT(EPOCH FROM NOW())::BIGINT::TEXT;
+    "SampleLevelId" := 'LEV_' || EXTRACT(EPOCH FROM NOW())::BIGINT::TEXT;
+    
+    -- Insert sample enterprise
+    INSERT INTO "Enterprises" (
+        "EnterpriseId", "EnterpriseName", "Description", 
+        "ContactEmail", "IsDeleted", "IsSystem"
+    ) VALUES (
+        "SampleEnterpriseId", 'Sample Enterprise', 'Test enterprise for development',
+        'test@example.com', FALSE, FALSE
+    );
+    
+    -- Insert sample cluster
+    INSERT INTO "Clusters" (
+        "ClusterId", "ClusterName", "Description", "EnterpriseId", "IsDeleted", "IsSystem"
+    ) VALUES (
+        "SampleClusterId", 'Main Cluster', 'Primary cluster', 
+        "SampleEnterpriseId", FALSE, FALSE
+    );
+    
+    -- Insert sample site
+    INSERT INTO "Sites" (
+        "SiteId", "ClusterId", "SiteName", "Description", "SiteType", "IsDeleted", "IsSystem"
+    ) VALUES (
+        "SampleSiteId", "SampleClusterId", 'Headquarters', 'Main office building', 
+        'I', FALSE, FALSE
+    );
+    
+    -- Insert sample level
+    INSERT INTO "Levels" (
+        "LevelId", "SiteId", "LevelName", "Description", "LevelNumber", "IsDeleted", "IsSystem"
+    ) VALUES (
+        "SampleLevelId", "SampleSiteId", 'Ground Floor', 'Ground floor of building', 
+        0, FALSE, FALSE
+    );
+    
+    RETURN "SampleEnterpriseId";
+END;
+$$ LANGUAGE plpgsql;
+
+-- ============================================================================
+-- COMMENTS AND DOCUMENTATION
+-- ============================================================================
+
+COMMENT ON DATABASE "IotPlatform" IS 'IoT Platform Database - Pascal Case Version';
+
+COMMENT ON TABLE "Enterprises" IS 'Master table for enterprise/organization management';
+COMMENT ON TABLE "Users" IS 'User accounts with enterprise association';
+COMMENT ON TABLE "Devices" IS 'IoT devices and sensors registry';
+COMMENT ON TABLE "TelemetryData" IS 'Time-series data from IoT devices (partitioned by timestamp)';
+COMMENT ON TABLE "Alarms" IS 'Alert and alarm events from devices';
+COMMENT ON TABLE "Assets" IS 'Physical assets that devices are attached to';
+
+-- Column comments for critical tables
+COMMENT ON COLUMN "TelemetryData"."UnixTimestamp" IS 'Unix timestamp for time-series partitioning';
+COMMENT ON COLUMN "Devices"."IsConnected" IS 'Real-time connection status of device';
+COMMENT ON COLUMN "Devices"."IsConfigured" IS 'Whether device has been properly configured';
+COMMENT ON COLUMN "Alarms"."AlarmType" IS 'C=Critical, W=Warning, I=Info';
+
+-- ============================================================================
+-- NOTES ON CASE SENSITIVITY IN POSTGRESQL
+-- ============================================================================
+
+-- IMPORTANT: PostgreSQL converts all unquoted identifiers to lowercase
+-- To preserve PascalCase, ALL identifiers must be quoted with double quotes
+-- 
+-- Examples:
+-- - Table name: "Enterprises" (not Enterprises)
+-- - Column name: "EnterpriseId" (not EnterpriseId) 
+-- - Index name: "IdxEnterprisesIsDeleted" (not IdxEnterprisesIsDeleted)
+-- - Function name: "UpdateUpdatedAtColumn" (not UpdateUpdatedAtColumn)
+--
+-- When querying, you must also use quotes:
+-- SELECT "EnterpriseId", "EnterpriseName" FROM "Enterprises" WHERE "IsDeleted" = FALSE;
+
+-- ============================================================================
+-- END OF SCHEMA DEFINITION
+-- ============================================================================

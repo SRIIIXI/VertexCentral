@@ -19,4 +19,13 @@ public class AlarmRepository : RepositoryBase
         selfReference = this;
         selfReference.connection = dataInterface;
     }
+
+    public override String GetInsertSQL()
+    {
+        return "INSERT INTO Alarms (Id, Name, Severity) VALUES (@Id, @Name, @Severity)";
+    }
+    public override String GetUpdateSQL()
+    {
+        return "UPDATE Alarms SET Name = @Name, Severity = @Severity WHERE Id = @Id";
+    }
 }

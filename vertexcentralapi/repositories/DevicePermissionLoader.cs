@@ -19,4 +19,13 @@ public class DevicePermissionLoader : RepositoryBase
     {
         throw new NotImplementedException();
     }
+    public override String GetInsertSQL()
+    {
+        return "";
+    }
+    
+    public override String GetUpdateSQL()
+    {
+        return "";
+    }
 }

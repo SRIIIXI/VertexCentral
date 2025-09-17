@@ -20,4 +20,13 @@ public class SiteRepository : RepositoryBase
         selfReference = this;
         selfReference.connection = dataInterface;
     }
+    public override String GetInsertSQL()
+    {
+        return "";
+    }
+    
+    public override String GetUpdateSQL()
+    {
+        return "";
+    }
 }

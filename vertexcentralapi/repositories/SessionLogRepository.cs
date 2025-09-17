@@ -20,4 +20,13 @@ public class SessionLogRepository : RepositoryBase
         selfReference = new SessionLogRepository();
         selfReference.connection = dataInterface;
     }
+    public override String GetInsertSQL()
+    {
+        return "";
+    }
+    
+    public override String GetUpdateSQL()
+    {
+        return "";
+    }
 }

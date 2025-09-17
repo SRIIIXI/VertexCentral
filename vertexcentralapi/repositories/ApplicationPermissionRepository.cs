@@ -14,10 +14,19 @@ public class ApplicationPermissionRepository : RepositoryBase
     public ApplicationPermissionRepository() : base("ApplicationPermissions")
     {
     }
-    
+
     public void Initialize(DataInterface? dataInterface)
     {
         selfReference = this;
         selfReference.connection = dataInterface;
+    }
+    
+    public override String GetInsertSQL()
+    {
+        return "";
+    }
+    public override String GetUpdateSQL()
+    {
+        return "";
     }
 }

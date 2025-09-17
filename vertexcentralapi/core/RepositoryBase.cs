@@ -36,4 +36,13 @@ public abstract class RepositoryBase
         get { return pageNumber; }
         set { pageNumber = value; }
     }
+
+    public virtual String GetInsertSQL()
+    {
+        return "";
+    }
+    public virtual String GetUpdateSQL()
+    {
+        return "";
+    }
 }

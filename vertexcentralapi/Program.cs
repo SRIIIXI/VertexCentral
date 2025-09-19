@@ -10,6 +10,8 @@ using Microsoft.Extensions.DependencyInjection;
 using EdgeLiteAPI.Models;
 using System.Data.Common;
 using Npgsql;
+using Microsoft.AspNetCore.Http.Features;
+using Microsoft.AspNetCore.Hosting.Server.Features;
 
 public class Program
 {
@@ -24,7 +26,7 @@ public class Program
     static private DeviceAttributeRepository? deviceAttributeRepository = null;
     static private DeviceRepository? deviceRepository = null;
     static private DeviceHierarchyRepository? deviceHierarchyRepository = null;
-    static private DevicePermissionLoader? devicePermissionRepository = null;
+    static private DevicePermissionRepository? devicePermissionRepository = null;
     static private EnterpriseRepository? enterpriseRepository = null;
     static private FeatureRepository? featureRepository = null;
     static private LevelRepository? levelRepository = null;
@@ -42,12 +44,17 @@ public class Program
     {
         Microsoft.AspNetCore.Hosting.IWebHostBuilder hostBuilder = Microsoft.AspNetCore.WebHost.CreateDefaultBuilder(args);
 
+        hostBuilder.ConfigureServices(services =>
+        {
+            services.AddCors(); // ✅ Required for UseCors to work
+        });
+
         WebHostConfiguration.Configure(hostBuilder);
 
         Microsoft.AspNetCore.Hosting.IWebHost host = hostBuilder.Build();
 
         // Open the database connection
-        string connectionString = "Host=localhost;Username=vertexcentral;Password=vertexcentral@1974#0311;Database=vertexcentral";
+        string connectionString = "Host=localhost;Username=vertexcentral;Password=vertexcentral@1974#0311;Database=VertexCentral";
 
         dataInterface = new DataInterface(connectionString);
 
@@ -68,13 +75,19 @@ public class Program
             return; // Exit if table names cannot be loaded
         }
 
-        foreach(var tableName in dataInterface.TableNames)
-        {
-            Console.WriteLine($"Found table: {tableName}");
-        }
         Initialize();
 
         host.Start();
+
+        IServerAddressesFeature addresses = host.ServerFeatures.Get<Microsoft.AspNetCore.Hosting.Server.Features.IServerAddressesFeature>();
+        if (addresses != null && addresses.Addresses.Any())
+        {
+            foreach (String address in addresses.Addresses)
+            {
+                Console.WriteLine($"Listening on: {address}");
+            }
+        }
+
         Console.WriteLine("Web service is running. Press Ctrl+C to shut down.");
         host.WaitForShutdown();
     }
@@ -97,7 +110,7 @@ public class Program
         deviceAttributeRepository = new DeviceAttributeRepository();
         deviceRepository = new DeviceRepository();
         deviceHierarchyRepository = new DeviceHierarchyRepository();
-        devicePermissionRepository = new DevicePermissionLoader();
+        devicePermissionRepository = new DevicePermissionRepository();
         enterpriseRepository = new EnterpriseRepository();
         featureRepository = new FeatureRepository();
         levelRepository = new LevelRepository();
@@ -135,7 +148,7 @@ public class Program
         userToRoleMappingRepository.Initialize(dataInterface);
         zoneRepository.Initialize(dataInterface);
 
-        SessionLogHandler.Initialize(loginSessionRepository);
+        SessionLogHandler.Initialize(loginSessionRepository, dataInterface);
     }
 }
 
@@ -152,6 +165,19 @@ public class RoutingConfiguration
     public static void Configure(IApplicationBuilder app)
     {
         app.UseRouting();
+
+        app.UseCors(policy =>
+            policy.SetIsOriginAllowed(origin =>
+            {
+                Console.WriteLine($"Origin: {origin}");
+                return origin.StartsWith("http://localhost") ||
+                    origin.StartsWith("http://127.0.0.1") ||
+                    origin.StartsWith("http://192.168.");
+            })
+            .AllowAnyHeader()
+            .AllowAnyMethod()
+            .AllowAnyOrigin());
+
         app.UseEndpoints(ConfigureEndpoints);
     }
 

@@ -424,7 +424,8 @@ CREATE TABLE "UserRoleMappings" (
 CREATE TABLE "SessionLogs" (
     "SessionId" VARCHAR(64) PRIMARY KEY,
     "UserId" VARCHAR(64) NOT NULL,
-    "TimestampLoggedIn" TIMESTAMP WITH TIME ZONE,
+    "IpAddress" VARCHAR(64) NOT NULL,
+   "TimestampLoggedIn" TIMESTAMP WITH TIME ZONE,
     "TimestampLoggedOut" TIMESTAMP WITH TIME ZONE,
     "Location" "CoordinateType",
     "IsDeleted" BOOLEAN DEFAULT TRUE,

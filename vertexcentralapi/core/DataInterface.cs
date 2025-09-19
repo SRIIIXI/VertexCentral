@@ -166,14 +166,14 @@ public class DataInterface
             return false;
         }
 
-        string sql = $"SELECT json_agg(t) FROM \"{model.TableName}\" t LIMIT {model.PageSize} OFFSET {(model.PageNumber - 1) * model.PageSize};";
+        string sql = $"SELECT json_agg(t) FROM ( SELECT * FROM \"{model.TableName}\" LIMIT {model.PageSize} OFFSET {(model.PageNumber - 1) * model.PageSize}) t ;";
+        Console.WriteLine(sql);
 
         DataTable resultTable = new DataTable();
 
         success = ExecuteSQL(sql, ref resultTable, ref errorMessage);
 
         StringBuilder jsonBuilder = new StringBuilder();
-        jsonBuilder.Append('[');
         bool isFirstRow = true;
 
         foreach (DataRow row in resultTable.Rows)
@@ -186,8 +186,6 @@ public class DataInterface
             jsonBuilder.Append(row[0].ToString());
             isFirstRow = false;
         }
-
-        jsonBuilder.Append(']');
 
         jsonResult = jsonBuilder.ToString();
 

@@ -9,16 +9,17 @@ using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 
-public class DevicePermissionLoader : RepositoryBase
+public class DevicePermissionRepository : RepositoryBase
 {
-    public DevicePermissionLoader() : base("DevicePermissions")
+    public DevicePermissionRepository() : base("DevicePermissions")
     {
     }
-    
+
     public void Initialize(DataInterface? dataInterface)
     {
-        throw new NotImplementedException();
-    }
+        selfReference = this;
+        selfReference.connection = dataInterface;
+}
     public override String GetInsertSQL()
     {
         return "";

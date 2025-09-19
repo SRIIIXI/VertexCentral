@@ -6,7 +6,7 @@ import './App.css';
 
 function App() 
 {
-
+  console.log("Running on port:", window.location.port);
   const navigate = useNavigate();
 
   useEffect(() => {

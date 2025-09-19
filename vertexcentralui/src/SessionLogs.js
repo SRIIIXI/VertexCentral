@@ -7,7 +7,7 @@ function SessionLogs() {
   const [logs, setLogs] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 3;
+  const itemsPerPage = 10;
 
   useEffect(() => {
     async function fetchLogs() {

@@ -47,5 +47,7 @@ namespace EdgeLiteAPI.Models
         public bool IsConfigured { get; set; }
 
         public bool IsSystem { get; set; }
+
+        public bool IsDeleted { get; set; }
     }
 }

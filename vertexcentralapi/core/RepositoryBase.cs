@@ -8,7 +8,7 @@ public abstract class RepositoryBase
     public RepositoryBase? selfReference = null;
     private String tableName = String.Empty;
     private String id = String.Empty;
-    private Int32 pageSize = 10;
+    private Int32 pageSize = 100;
     private Int32 pageNumber = 1;
 
     public RepositoryBase(String tableName)

@@ -16,8 +16,8 @@ using Microsoft.AspNetCore.Hosting.Server.Features;
 public class Program
 {
     static private DataInterface? dataInterface = null;
-    static private AlarmRepository? alarmRepository = null;      
-    static  private ApplicationRepository? applicationRepository = null;
+    static private AlarmRepository? alarmRepository = null;
+    static private ApplicationRepository? applicationRepository = null;
     static private ApplicationPermissionRepository? applicationPermissionRepository = null;
     static private AreaRepository? areaRepository = null;
     static private AssetRepository? assetRepository = null;
@@ -38,10 +38,19 @@ public class Program
     static private TelemetryRepository? telemetryRepository = null;
     static private UserRepository? userRepository = null;
     static private UserToRoleMappingRepository? userToRoleMappingRepository = null;
-    static private ZoneRepository? zoneRepository = null; 
+    static private ZoneRepository? zoneRepository = null;
 
     public static void Main(string[] args)
     {
+        // This serviice is designed for only GNU/Liuux and FreeBSD systems
+        Logger.Initialize();
+
+        if (IsWindowsOS())
+        {
+            Logger.Error("This service is designed to run on GNU/Linux or FreeBSD systems only.");
+            return;
+        }
+
         Microsoft.AspNetCore.Hosting.IWebHostBuilder hostBuilder = Microsoft.AspNetCore.WebHost.CreateDefaultBuilder(args);
 
         hostBuilder.ConfigureServices(services =>
@@ -60,17 +69,17 @@ public class Program
 
         if (dataInterface.OpenConnection())
         {
-            Console.WriteLine("Database connection established.");
+            Logger.Info("Database connection established.");
         }
         else
         {
-            Console.WriteLine("Failed to establish database connection.");
+            Logger.Error("Failed to establish database connection.");
             return; // Exit if the database connection cannot be established
         }
 
-        if(!dataInterface.LoadTableNames())
+        if (!dataInterface.LoadTableNames())
         {
-            Console.WriteLine("Failed to load table names from the database.");
+            Logger.Error("Failed to load table names from the database.");
             dataInterface.CloseConnection();
             return; // Exit if table names cannot be loaded
         }
@@ -84,11 +93,11 @@ public class Program
         {
             foreach (String address in addresses.Addresses)
             {
-                Console.WriteLine($"Listening on: {address}");
+                Logger.Info($"Listening on: {address}");
             }
         }
 
-        Console.WriteLine("Web service is running. Press Ctrl+C to shut down.");
+        Logger.Info("Web service is running. Press Ctrl+C to shut down.");
         host.WaitForShutdown();
     }
 
@@ -96,7 +105,7 @@ public class Program
     {
         if (dataInterface == null)
         {
-            Console.WriteLine("DataInterface is not initialized.");
+            Logger.Critical("DataInterface is not initialized.");
             return;
         }
 
@@ -149,6 +158,12 @@ public class Program
         zoneRepository.Initialize(dataInterface);
 
         SessionLogHandler.Initialize(loginSessionRepository, dataInterface);
+    }
+
+    //Helper functions the we will need later
+    public static bool IsWindowsOS()
+    {
+        return System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(System.Runtime.InteropServices.OSPlatform.Windows);
     }
 }
 
@@ -310,7 +325,7 @@ public class RoutingConfiguration
     }
 
     private static void ConfigureDeleteEndpoints(IEndpointRouteBuilder endpoints)
-    {      
+    {
         endpoints.MapDelete("/api/v1/application/{id}", ApplicationHandler.Delete);
         endpoints.MapDelete("/api/v1/applicationpermission/{id}", ApplicationPermissionHandler.Delete);
         endpoints.MapDelete("/api/v1/area/{id}", AreaHandler.Delete);

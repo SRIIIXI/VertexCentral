@@ -6,6 +6,7 @@ import './index.css';
 
 import App from './App';
 import Login from './Login';
+import ServiceInitializer from './ServiceInitializer';
 import MainWindow from './MainWindow';
 import ForgotPassword from './ForgotPassword';
 import SideBar from './SideBar';
@@ -24,7 +25,8 @@ import Enterprises from './Enterprises';
 import Clusters from './Clusters';
 import Sites from './Sites';
 import Zones from './Zones';
-import Assets from './Assets';  
+import Assets from './Assets';
+import Firmwares from './Firmwares';
 
 import DeviceForm from './DeviceForm';
 import EnterpriseForm from './EnterpriseForm';
@@ -53,6 +55,7 @@ root.render(
     <Routes>
       <Route path="/" element={<App />} />
       <Route path="/login" element={<Login />} />
+      <Route path="/service-initializer" element={<ServiceInitializer/>}/>
       <Route path="/main-window" element={<MainWindow />} />
       <Route path="/forgot-password" element={<ForgotPassword />} />
       <Route path="/side-bar" element={<SideBar />} />
@@ -72,6 +75,7 @@ root.render(
       <Route path="/sites" element={<Sites />} />
       <Route path="/zones" element={<Zones />} />
       <Route path="/assets" element={<Assets />} />
+      <Route path="/firmwares" element={<Firmwares />} />
 
       <Route path="/zone-form" element={<ZoneForm />} />
 

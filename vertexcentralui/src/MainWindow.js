@@ -13,6 +13,7 @@ import Clusters from './Clusters';
 import Sites from './Sites';
 import Zones from './Zones';
 import Assets from './Assets';  
+import Firmwares from './Firmwares';
 
 import Applications from './Applications';
 import Features from './Features';
@@ -50,6 +51,8 @@ function MainWindow() {
         return <Zones />;
       case 'Assets':
         return <Assets />;
+      case 'Firmwares':
+        return <Firmwares />;
 
       case 'Applications':
         return <Applications />;

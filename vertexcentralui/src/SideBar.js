@@ -26,7 +26,7 @@ function SideBar({ activeItem, setActiveItem }) {
         <hr className="Sidebar-separator" />
 
         {/* Infrastructure */}
-        {['Enterprises', 'Clusters', 'Sites', 'Zones', 'Devices', 'Assets'].map(label => (
+        {['Enterprises', 'Clusters', 'Sites', 'Zones', 'Devices', 'Assets', 'Firmwares'].map(label => (
           <li
             key={label}
             className={`Sidebar-item ${activeItem === label ? 'active' : ''}`}

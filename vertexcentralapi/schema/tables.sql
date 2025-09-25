@@ -17,10 +17,24 @@ CREATE TABLE "Enterprises" (
     "AddressState" VARCHAR(32),
     "AddressCountry" VARCHAR(32),
     "AddressPinCode" VARCHAR(16),
-    "IsDeleted" BOOLEAN DEFAULT TRUE,
-    "IsSystem" BOOLEAN DEFAULT FALSE,
-    "CreatedAt" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    "UpdatedAt" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+    "IsDeleted" BOOLEAN DEFAULT FALSE,
+    "IsSystem" BOOLEAN DEFAULT FALSE
+);
+
+-- ============================================================================
+-- COUNTRIES TABLE
+-- ============================================================================
+CREATE TABLE "Countries" (
+    "CountryId" VARCHAR(8) PRIMARY KEY, -- ISO 3166-1 alpha-3
+    "CountryName" VARCHAR(64) NOT NULL,
+    "Capital" VARCHAR(64),
+    "IsoCode2" VARCHAR(2), -- ISO 3166-1 alpha-2
+    "IsoCode3" VARCHAR(3), -- ISO 3166-1 alpha-3
+    "IsdCode" VARCHAR(8),
+    "Currency" VARCHAR(8),
+    "GeoClusters" VARCHAR(256), -- 'APAC;ASEAN' or 'EMEA;EU;BENELUX'
+    "IsDeleted" BOOLEAN DEFAULT FALSE,
+    "IsSystem" BOOLEAN DEFAULT TRUE
 );
 
 -- ============================================================================
@@ -29,6 +43,7 @@ CREATE TABLE "Enterprises" (
 CREATE TABLE "Users" (
     "UserId" VARCHAR(64) PRIMARY KEY,
     "EnterpriseId" VARCHAR(64) NOT NULL,
+    "RoleType" "RoleTypeEnum" NOT NULL,
     "UserName" VARCHAR(64) NOT NULL UNIQUE,
     "Email" VARCHAR(255) NOT NULL UNIQUE,
     "ContactMo" VARCHAR(31),
@@ -36,12 +51,17 @@ CREATE TABLE "Users" (
     "LastName" VARCHAR(64),
     "PasswordHash" VARCHAR(256),
     "PasswordSalt" VARCHAR(256),
-    "UnixTimestampLastLogin" BIGINT,
-    "IsDeleted" BOOLEAN DEFAULT TRUE,
+    "IsDeleted" BOOLEAN DEFAULT FALSE,
     "IsSystem" BOOLEAN DEFAULT FALSE,
-    "CreatedAt" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    "UpdatedAt" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY ("EnterpriseId") REFERENCES "Enterprises"("EnterpriseId") ON DELETE CASCADE
+);
+
+-- ============================================================================
+-- BOUNDS AREAS TABLE
+-- ============================================================================
+CREATE TABLE "BoundsArea" (
+    "BoundsAreaId" VARCHAR(64) PRIMARY KEY,
+    "AreaPoints" "CoordinateType"[]
 );
 
 -- ============================================================================
@@ -49,34 +69,16 @@ CREATE TABLE "Users" (
 -- ============================================================================
 CREATE TABLE "Sites" (
     "SiteId" VARCHAR(64) PRIMARY KEY,
-    "ClusterId" VARCHAR(64) NOT NULL,
     "SiteName" VARCHAR(64) NOT NULL,
     "Description" VARCHAR(256),
     "CountryId" VARCHAR(8) NOT NULL,
     "SiteType" "SiteTypeEnum" NOT NULL,
-    "SiteLevelCount" INTEGER DEFAULT 0,
+    "BoundsAreaId" VARCHAR(64),
     "IsMasterSite" BOOLEAN DEFAULT FALSE,
-    "IsDeleted" BOOLEAN DEFAULT TRUE,
+    "IsDeleted" BOOLEAN DEFAULT FALSE,
     "IsSystem" BOOLEAN DEFAULT FALSE,
-    "CreatedAt" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    "UpdatedAt" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY ("ClusterId") REFERENCES "Clusters"("ClusterId") ON DELETE CASCADE
-);
-
--- ============================================================================
--- AREAS TABLE
--- ============================================================================
-CREATE TABLE "Areas" (
-    "AreaId" VARCHAR(64) PRIMARY KEY,
-    "AreaName" VARCHAR(64) NOT NULL,
-    "Description" VARCHAR(256),
-    "AreaPoints" "CoordinateType"[],
-    "AreaPointsCount" INTEGER DEFAULT 0,
-    "IsDeleted" BOOLEAN DEFAULT TRUE,
-    "IsSystem" BOOLEAN DEFAULT FALSE,
-    "CreatedAt" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    "UpdatedAt" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    CONSTRAINT "MaxAreaPoints" CHECK ("AreaPointsCount" <= 4096)
+    FOREIGN KEY ("CountryId") REFERENCES "Countries"("CountryId") ON DELETE RESTRICT,
+    FOREIGN KEY ("BoundsAreaId") REFERENCES "BoundsArea"("BoundsAreaId") ON DELETE SET NULL
 );
 
 -- ============================================================================
@@ -89,12 +91,10 @@ CREATE TABLE "Levels" (
     "Description" VARCHAR(256),
     "LevelNumber" INTEGER NOT NULL,
     "BoundsAreaId" VARCHAR(64),
-    "IsDeleted" BOOLEAN DEFAULT TRUE,
+    "IsDeleted" BOOLEAN DEFAULT FALSE,
     "IsSystem" BOOLEAN DEFAULT FALSE,
-    "CreatedAt" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    "UpdatedAt" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY ("SiteId") REFERENCES "Sites"("SiteId") ON DELETE CASCADE,
-    FOREIGN KEY ("BoundsAreaId") REFERENCES "Areas"("AreaId") ON DELETE SET NULL
+    FOREIGN KEY ("BoundsAreaId") REFERENCES "BoundsArea"("BoundsAreaId") ON DELETE SET NULL
 );
 
 -- ============================================================================
@@ -102,17 +102,16 @@ CREATE TABLE "Levels" (
 -- ============================================================================
 CREATE TABLE "Zones" (
     "ZoneId" VARCHAR(64) PRIMARY KEY,
+    "SiteId" VARCHAR(64) NOT NULL,
     "LevelId" VARCHAR(64) NOT NULL,
     "ZoneName" VARCHAR(64) NOT NULL,
     "Description" VARCHAR(256),
-    "ZonePoints" "CoordinateType"[],
-    "ZonePointsCount" INTEGER DEFAULT 0,
-    "IsDeleted" BOOLEAN DEFAULT TRUE,
+    "BoundsAreaId" VARCHAR(64),
+    "IsDeleted" BOOLEAN DEFAULT FALSE,
     "IsSystem" BOOLEAN DEFAULT FALSE,
-    "CreatedAt" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    "UpdatedAt" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY ("SiteId") REFERENCES "Sites"("SiteId") ON DELETE CASCADE,
     FOREIGN KEY ("LevelId") REFERENCES "Levels"("LevelId") ON DELETE CASCADE,
-    CONSTRAINT "MaxZonePoints" CHECK ("ZonePointsCount" <= 4096)
+    FOREIGN KEY ("BoundsAreaId") REFERENCES "BoundsArea"("BoundsAreaId") ON DELETE SET NULL
 );
 
 -- ============================================================================
@@ -124,18 +123,18 @@ CREATE TABLE "Devices" (
     "Description" VARCHAR(256),
     "SerialNo" VARCHAR(64),
     "HardwareId" VARCHAR(64),
-    "FirmwareVersion" VARCHAR(64),
+    "CurrentFirmwareVersion" VARCHAR(64),
+    "CurrentFirmwareControlId" VARCHAR(64),
+    "LastFirmwareUpdateAt" TIMESTAMP WITH TIME ZONE,
     "Model" VARCHAR(64),
     "Manufacturer" VARCHAR(64),
     "DeviceType" "DeviceTypeEnum" NOT NULL,
     "DeviceSubType" "DeviceSubTypeEnum" NOT NULL,
-    "DeviceInventoryLifeCycle" "DeviceLifeCycleEnum" NOT NULL,
-    "IsDeleted" BOOLEAN DEFAULT TRUE,
+    "InventoryLifeCyle" "InventoryLifeCycleEnum" NOT NULL,
+    "IsDeleted" BOOLEAN DEFAULT FALSE,
     "IsConnected" BOOLEAN DEFAULT FALSE,
     "IsConfigured" BOOLEAN DEFAULT FALSE,
-    "IsSystem" BOOLEAN DEFAULT FALSE,
-    "CreatedAt" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    "UpdatedAt" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+    "IsSystem" BOOLEAN DEFAULT FALSE
 );
 
 -- ============================================================================
@@ -147,17 +146,18 @@ CREATE TABLE "Assets" (
     "Description" VARCHAR(256),
     "SerialNo" VARCHAR(64),
     "HardwareId" VARCHAR(64),
-    "FirmwareVersion" VARCHAR(64),
+    "CurrentFirmwareVersion" VARCHAR(64),
+    "CurrentFirmwareControlId" VARCHAR(64),
+    "LastFirmwareUpdateAt" TIMESTAMP WITH TIME ZONE,
     "Model" VARCHAR(64),
     "Manufacturer" VARCHAR(64),
     "CategoryId" VARCHAR(64),
     "SubcategoryId" VARCHAR(64),
+    "InventoryLifeCyle" "InventoryLifeCycleEnum" NOT NULL,
     "SiteId" VARCHAR(64),
     "LevelId" VARCHAR(64),
-    "IsDeleted" BOOLEAN DEFAULT TRUE,
+    "IsDeleted" BOOLEAN DEFAULT FALSE,
     "IsSystem" BOOLEAN DEFAULT FALSE,
-    "CreatedAt" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    "UpdatedAt" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY ("SiteId") REFERENCES "Sites"("SiteId") ON DELETE SET NULL,
     FOREIGN KEY ("LevelId") REFERENCES "Levels"("LevelId") ON DELETE SET NULL
 );
@@ -168,28 +168,11 @@ CREATE TABLE "Assets" (
 CREATE TABLE "AssetDeviceMappings" (
     "AssetDeviceMappingId" VARCHAR(64) PRIMARY KEY,
     "AssetId" VARCHAR(64) NOT NULL,
-    "DeviceCount" INTEGER DEFAULT 0,
-    "UnixTimestampCreated" BIGINT,
-    "UnixTimestampUpdated" BIGINT,
-    "IsDeleted" BOOLEAN DEFAULT TRUE,
-    "IsSystem" BOOLEAN DEFAULT FALSE,
-    "CreatedAt" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    "UpdatedAt" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY ("AssetId") REFERENCES "Assets"("AssetId") ON DELETE CASCADE,
-    CONSTRAINT "MaxDevicePerAsset" CHECK ("DeviceCount" <= 32)
-);
-
--- ============================================================================
--- ASSET_DEVICES TABLE (Junction table for asset-device many-to-many relationship)
--- ============================================================================
-CREATE TABLE "AssetDevices" (
-    "Id" SERIAL PRIMARY KEY,
-    "AssetDeviceMappingId" VARCHAR(64) NOT NULL,
     "DeviceId" VARCHAR(64) NOT NULL,
-    "CreatedAt" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY ("AssetDeviceMappingId") REFERENCES "AssetDeviceMappings"("AssetDeviceMappingId") ON DELETE CASCADE,
-    FOREIGN KEY ("DeviceId") REFERENCES "Devices"("DeviceId") ON DELETE CASCADE,
-    UNIQUE("AssetDeviceMappingId", "DeviceId")
+    "IsDeleted" BOOLEAN DEFAULT FALSE,
+    "IsSystem" BOOLEAN DEFAULT FALSE,
+    FOREIGN KEY ("AssetId") REFERENCES "Assets"("AssetId") ON DELETE CASCADE,
+    FOREIGN KEY ("DeviceId") REFERENCES "Devices"("DeviceId") ON DELETE CASCADE
 );
 
 -- ============================================================================
@@ -197,39 +180,13 @@ CREATE TABLE "AssetDevices" (
 -- ============================================================================
 CREATE TABLE "DeviceHierarchies" (
     "DeviceHierarchyId" VARCHAR(64) PRIMARY KEY,
-    "DeviceHierarchyName" VARCHAR(64),
-    "Description" VARCHAR(256),
     "ParentDeviceId" VARCHAR(64) NOT NULL,
     "ChildDeviceId" VARCHAR(64) NOT NULL,
-    "UnixTimestampCreated" BIGINT,
-    "UnixTimestampUpdated" BIGINT,
-    "IsDeleted" BOOLEAN DEFAULT TRUE,
+    "IsDeleted" BOOLEAN DEFAULT FALSE,
     "IsSystem" BOOLEAN DEFAULT FALSE,
-    "CreatedAt" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    "UpdatedAt" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY ("ParentDeviceId") REFERENCES "Devices"("DeviceId") ON DELETE CASCADE,
     FOREIGN KEY ("ChildDeviceId") REFERENCES "Devices"("DeviceId") ON DELETE CASCADE,
     CONSTRAINT "NoSelfReference" CHECK ("ParentDeviceId" != "ChildDeviceId")
-);
-
--- ============================================================================
--- DEVICE_PERMISSIONS TABLE
--- ============================================================================
-CREATE TABLE "DevicePermissions" (
-    "DevicePermissionId" VARCHAR(64) PRIMARY KEY,
-    "DevicePermissionName" VARCHAR(64),
-    "Description" VARCHAR(256),
-    "DeviceId" VARCHAR(64) NOT NULL,
-    "UserId" VARCHAR(64) NOT NULL,
-    "PermissionType" "PermissionTypeEnum" NOT NULL,
-    "UnixTimestampCreated" BIGINT,
-    "UnixTimestampUpdated" BIGINT,
-    "IsDeleted" BOOLEAN DEFAULT TRUE,
-    "IsSystem" BOOLEAN DEFAULT FALSE,
-    "CreatedAt" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    "UpdatedAt" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY ("DeviceId") REFERENCES "Devices"("DeviceId") ON DELETE CASCADE,
-    FOREIGN KEY ("UserId") REFERENCES "Users"("UserId") ON DELETE CASCADE
 );
 
 -- ============================================================================
@@ -250,10 +207,8 @@ CREATE TABLE "DeviceAttributes" (
     "PrecisionVal" DOUBLE PRECISION, -- 'precision' is reserved keyword
     "RangeMin" DOUBLE PRECISION,
     "RangeMax" DOUBLE PRECISION,
-    "IsDeleted" BOOLEAN DEFAULT TRUE,
+    "IsDeleted" BOOLEAN DEFAULT FALSE,
     "IsSystem" BOOLEAN DEFAULT FALSE,
-    "CreatedAt" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    "UpdatedAt" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY ("DeviceId") REFERENCES "Devices"("DeviceId") ON DELETE CASCADE
 );
 
@@ -268,12 +223,9 @@ CREATE TABLE "Applications" (
     "Vendor" VARCHAR(64),
     "CategoryId" VARCHAR(64),
     "SubcategoryId" VARCHAR(64),
-    "FeaturesCount" INTEGER DEFAULT 0,
-    "IsDeleted" BOOLEAN DEFAULT TRUE,
+    "IsDeleted" BOOLEAN DEFAULT FALSE,
     "IsSystem" BOOLEAN DEFAULT FALSE,
-    "CreatedAt" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    "UpdatedAt" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    CONSTRAINT "MaxFeaturesPerApp" CHECK ("FeaturesCount" <= 1024)
+    "IsPlatform" BOOLEAN DEFAULT FALSE
 );
 
 -- ============================================================================
@@ -284,12 +236,9 @@ CREATE TABLE "Features" (
     "FeatureName" VARCHAR(64) NOT NULL,
     "Description" VARCHAR(256),
     "ApplicationId" VARCHAR(64) NOT NULL,
-    "UnixTimestampCreated" BIGINT,
-    "UnixTimestampUpdated" BIGINT,
-    "IsDeleted" BOOLEAN DEFAULT TRUE,
+    "IsDeleted" BOOLEAN DEFAULT FALSE,
     "IsSystem" BOOLEAN DEFAULT FALSE,
-    "CreatedAt" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    "UpdatedAt" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    "IsPlatform" BOOLEAN DEFAULT FALSE,
     FOREIGN KEY ("ApplicationId") REFERENCES "Applications"("ApplicationId") ON DELETE CASCADE
 );
 
@@ -303,58 +252,38 @@ CREATE TABLE "Rules" (
     "RuleType" "RuleTypeEnum" NOT NULL,
     "RuleExpression" VARCHAR(1024),
     "Priority" INTEGER DEFAULT 0,
-    "IsDeleted" BOOLEAN DEFAULT TRUE,
-    "IsSystem" BOOLEAN DEFAULT FALSE,
-    "CreatedAt" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    "UpdatedAt" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+    "IsDeleted" BOOLEAN DEFAULT FALSE,
+    "IsSystem" BOOLEAN DEFAULT FALSE
 );
 
 -- ============================================================================
--- APPLICATION_PERMISSIONS TABLE
+-- ACTIONS TABLE
 -- ============================================================================
-CREATE TABLE "ApplicationPermissions" (
-    "ApplicationPermissionId" VARCHAR(64) PRIMARY KEY,
-    "ApplicationId" VARCHAR(64) NOT NULL,
-    "UserId" VARCHAR(64) NOT NULL,
-    "PermissionType" "PermissionTypeEnum" NOT NULL,
-    "UnixTimestampCreated" BIGINT,
-    "UnixTimestampUpdated" BIGINT,
-    "IsDeleted" BOOLEAN DEFAULT TRUE,
-    "IsSystem" BOOLEAN DEFAULT FALSE,
-    "CreatedAt" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    "UpdatedAt" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY ("ApplicationId") REFERENCES "Applications"("ApplicationId") ON DELETE CASCADE,
-    FOREIGN KEY ("UserId") REFERENCES "Users"("UserId") ON DELETE CASCADE
-);
-
--- ============================================================================
--- ROLES TABLE
--- ============================================================================
-CREATE TABLE "Roles" (
-    "RoleId" VARCHAR(64) PRIMARY KEY,
-    "RoleName" VARCHAR(64) NOT NULL,
+CREATE TABLE "Actions" (
+    "ActionId" VARCHAR(64) PRIMARY KEY,
+    "ActionName" VARCHAR(64) NOT NULL,
     "Description" VARCHAR(256),
-    "PermissionsCount" INTEGER DEFAULT 0,
-    "UnixTimestampCreated" BIGINT,
-    "UnixTimestampUpdated" BIGINT,
-    "IsDeleted" BOOLEAN DEFAULT TRUE,
+    "RuleId" VARCHAR(64),
+    "ParentRuleId" VARCHAR(64),
+    "ChildRuleId" VARCHAR(64),
+    "IsDeleted" BOOLEAN DEFAULT FALSE,
     "IsSystem" BOOLEAN DEFAULT FALSE,
-    "CreatedAt" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    "UpdatedAt" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    CONSTRAINT "MaxPermissionsPerRole" CHECK ("PermissionsCount" <= 1024)
+    FOREIGN KEY ("RuleId") REFERENCES "Rules"("RuleId") ON DELETE CASCADE,
+    FOREIGN KEY ("ParentRuleId") REFERENCES "Rules"("RuleId") ON DELETE CASCADE,
+    FOREIGN KEY ("ChildRuleId") REFERENCES "Rules"("RuleId") ON DELETE CASCADE
 );
 
 -- ============================================================================
 -- ROLE_PERMISSIONS TABLE (Junction table for role-permission many-to-many relationship)
 -- ============================================================================
 CREATE TABLE "RolePermissions" (
-    "Id" SERIAL PRIMARY KEY,
-    "RoleId" VARCHAR(64) NOT NULL,
-    "ApplicationPermissionId" VARCHAR(64) NOT NULL,
-    "CreatedAt" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY ("RoleId") REFERENCES "Roles"("RoleId") ON DELETE CASCADE,
-    FOREIGN KEY ("ApplicationPermissionId") REFERENCES "ApplicationPermissions"("ApplicationPermissionId") ON DELETE CASCADE,
-    UNIQUE("RoleId", "ApplicationPermissionId")
+    "RolePermissionId" VARCHAR(64) PRIMARY KEY,
+    "RoleType" "RoleTypeEnum" NOT NULL,
+    "ApplicationId" VARCHAR(64) NOT NULL,
+    "FeatureId" VARCHAR(64) NOT NULL,
+    FOREIGN KEY ("ApplicationId") REFERENCES "Applications"("ApplicationId") ON DELETE CASCADE,
+    FOREIGN KEY ("FeatureId") REFERENCES "Features"("FeatureId") ON DELETE CASCADE,
+    UNIQUE("RoleType", "ApplicationId", "FeatureId")
 );
 
 -- ============================================================================
@@ -363,15 +292,11 @@ CREATE TABLE "RolePermissions" (
 CREATE TABLE "UserRoleMappings" (
     "UserRoleMappingId" VARCHAR(64) PRIMARY KEY,
     "UserId" VARCHAR(64) NOT NULL,
-    "RoleId" VARCHAR(64) NOT NULL,
-    "UnixTimestampCreated" BIGINT,
-    "UnixTimestampUpdated" BIGINT,
-    "IsDeleted" BOOLEAN DEFAULT TRUE,
+    "RolePermissionId" VARCHAR(64) NOT NULL,
+    "IsDeleted" BOOLEAN DEFAULT FALSE,
     "IsSystem" BOOLEAN DEFAULT FALSE,
-    "CreatedAt" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    "UpdatedAt" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY ("UserId") REFERENCES "Users"("UserId") ON DELETE CASCADE,
-    FOREIGN KEY ("RoleId") REFERENCES "Roles"("RoleId") ON DELETE CASCADE
+    FOREIGN KEY ("RolePermissionId") REFERENCES "RolePermissions"("RolePermissionId") ON DELETE CASCADE
 );
 
 -- ============================================================================
@@ -381,12 +306,11 @@ CREATE TABLE "SessionLogs" (
     "SessionId" VARCHAR(64) PRIMARY KEY,
     "UserId" VARCHAR(64) NOT NULL,
     "IpAddress" VARCHAR(64) NOT NULL,
-   "TimestampLoggedIn" TIMESTAMP WITH TIME ZONE,
+    "TimestampLoggedIn" TIMESTAMP WITH TIME ZONE,
     "TimestampLoggedOut" TIMESTAMP WITH TIME ZONE,
     "Location" "CoordinateType",
-    "IsDeleted" BOOLEAN DEFAULT TRUE,
+    "IsDeleted" BOOLEAN DEFAULT FALSE,
     "IsSystem" BOOLEAN DEFAULT FALSE,
-    "TimestampCreatedAt" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY ("UserId") REFERENCES "Users"("UserId") ON DELETE CASCADE
 );
 
@@ -400,10 +324,8 @@ CREATE TABLE "Alarms" (
     "AlarmType" "AlarmTypeEnum" NOT NULL,
     "Description" VARCHAR(256),
     "RelatedTelemetryCount" INTEGER DEFAULT 0,
-    "IsDeleted" BOOLEAN DEFAULT TRUE,
+    "IsDeleted" BOOLEAN DEFAULT FALSE,
     "IsSystem" BOOLEAN DEFAULT FALSE,
-    "CreatedAt" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    "UpdatedAt" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY ("DeviceId") REFERENCES "Devices"("DeviceId") ON DELETE CASCADE
 );
 
@@ -414,9 +336,8 @@ CREATE TABLE "AlarmTelemetryRelations" (
     "Id" SERIAL PRIMARY KEY,
     "AlarmId" VARCHAR(64) NOT NULL,
     "TelemetryDataId" VARCHAR(64) NOT NULL,
-    "CreatedAt" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY ("AlarmId") REFERENCES "Alarms"("AlarmId") ON DELETE CASCADE
-    -- Note: FK to "TelemetryData" is complex due to partitioning
+    -- Note: FK to "TelemetryData" will be added when telemetry tables are created
 );
 
 -- ============================================================================
@@ -429,10 +350,8 @@ CREATE TABLE "Notifications" (
     "NotificationType" "NotificationTypeEnum" NOT NULL,
     "Description" VARCHAR(256),
     "IsRead" BOOLEAN DEFAULT FALSE,
-    "IsDeleted" BOOLEAN DEFAULT TRUE,
+    "IsDeleted" BOOLEAN DEFAULT FALSE,
     "IsSystem" BOOLEAN DEFAULT FALSE,
-    "CreatedAt" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    "UpdatedAt" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY ("UserId") REFERENCES "Users"("UserId") ON DELETE CASCADE
 );
 
@@ -449,7 +368,7 @@ CREATE TABLE "TelemetryControl" (
     "Hour" INTEGER NOT NULL,
     "FilePath" VARCHAR(512) NOT NULL, -- enterprise/site/device/year/month/hour
     "FileName" VARCHAR(256) NOT NULL,
-    "FileStatus" "TelemetryFileStatusEnum" NOT NULL DEFAULT 'ACTIVE',
+    "FileStatus" "TelemetryFileStatusEnum" NOT NULL DEFAULT 'A',
     "FileSizeBytes" BIGINT DEFAULT 0,
     "RecordCount" BIGINT DEFAULT 0,
     "DataTypes" VARCHAR(64)[], -- Array of data types in this file
@@ -464,8 +383,6 @@ CREATE TABLE "TelemetryControl" (
     "CompressionRatio" DOUBLE PRECISION,
     "IsDeleted" BOOLEAN DEFAULT FALSE,
     "IsSystem" BOOLEAN DEFAULT FALSE,
-    "CreatedAt" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    "UpdatedAt" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY ("DeviceId") REFERENCES "Devices"("DeviceId") ON DELETE CASCADE,
     FOREIGN KEY ("EnterpriseId") REFERENCES "Enterprises"("EnterpriseId") ON DELETE CASCADE,
     FOREIGN KEY ("SiteId") REFERENCES "Sites"("SiteId") ON DELETE CASCADE,
@@ -474,6 +391,9 @@ CREATE TABLE "TelemetryControl" (
     CONSTRAINT "ValidYear" CHECK ("Year" >= 2020 AND "Year" <= 2100)
 );
 
+-- ============================================================================
+-- FIRMWARE_CONTROL TABLE
+-- ============================================================================
 CREATE TABLE "FirmwareControl" (
     "FirmwareControlId" VARCHAR(64) PRIMARY KEY,
     "Manufacturer" VARCHAR(64) NOT NULL,
@@ -483,7 +403,7 @@ CREATE TABLE "FirmwareControl" (
     "FilePath" VARCHAR(512) NOT NULL, -- firmware/manufacturer/model/version/
     "FileName" VARCHAR(256) NOT NULL,
     "FileType" VARCHAR(16) NOT NULL, -- hex, deb, pkg, bin, img, tar.gz
-    "FileStatus" "FirmwareFileStatusEnum" NOT NULL DEFAULT 'UPLOADED',
+    "FileStatus" "FirmwareFileStatusEnum" NOT NULL DEFAULT 'U',
     "FileSizeBytes" BIGINT DEFAULT 0,
     "Checksum" VARCHAR(128) NOT NULL, -- Critical for firmware integrity (SHA256)
     "ChecksumAlgorithm" VARCHAR(16) DEFAULT 'SHA256',
@@ -506,8 +426,6 @@ CREATE TABLE "FirmwareControl" (
     "ApprovedAt" TIMESTAMP WITH TIME ZONE,
     "IsDeleted" BOOLEAN DEFAULT FALSE,
     "IsSystem" BOOLEAN DEFAULT FALSE,
-    "CreatedAt" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    "UpdatedAt" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY ("UploadedBy") REFERENCES "Users"("UserId") ON DELETE SET NULL,
     FOREIGN KEY ("ApprovedBy") REFERENCES "Users"("UserId") ON DELETE SET NULL,
     CONSTRAINT "ValidFileType" CHECK ("FileType" IN ('hex', 'deb', 'pkg', 'bin', 'img', 'tar.gz', 'zip', 'elf'))
@@ -521,7 +439,7 @@ CREATE TABLE "FirmwareDeployments" (
     "FirmwareControlId" VARCHAR(64) NOT NULL,
     "TargetType" "FirmwareTargetTypeEnum" NOT NULL,
     "TargetId" VARCHAR(64) NOT NULL, -- DeviceId or AssetId
-    "DeploymentStatus" "FirmwareDeploymentStatusEnum" NOT NULL DEFAULT 'PENDING',
+    "DeploymentStatus" "FirmwareDeploymentStatusEnum" NOT NULL DEFAULT 'P',
     "PreviousFirmwareVersion" VARCHAR(64), -- For rollback purposes
     "DeploymentStarted" TIMESTAMP WITH TIME ZONE,
     "DeploymentCompleted" TIMESTAMP WITH TIME ZONE,
@@ -538,8 +456,6 @@ CREATE TABLE "FirmwareDeployments" (
     "ParentDeploymentId" VARCHAR(64), -- Reference to original deployment if this is a rollback
     "IsDeleted" BOOLEAN DEFAULT FALSE,
     "IsSystem" BOOLEAN DEFAULT FALSE,
-    "CreatedAt" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    "UpdatedAt" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY ("FirmwareControlId") REFERENCES "FirmwareControl"("FirmwareControlId") ON DELETE CASCADE,
     FOREIGN KEY ("InitiatedBy") REFERENCES "Users"("UserId") ON DELETE SET NULL,
     FOREIGN KEY ("ParentDeploymentId") REFERENCES "FirmwareDeployments"("FirmwareDeploymentId") ON DELETE SET NULL,
@@ -554,7 +470,7 @@ CREATE TABLE "FirmwareCompatibility" (
     "FirmwareCompatibilityId" VARCHAR(64) PRIMARY KEY,
     "FirmwareControlId" VARCHAR(64) NOT NULL,
     "TargetType" "FirmwareTargetTypeEnum" NOT NULL,
-    "TargetId" VARCHAR(64) NOT NULL, -- Specific DeviceId or AssetId, or NULL for model-wide compatibility
+    "TargetId" VARCHAR(64), -- Specific DeviceId or AssetId, or NULL for model-wide compatibility
     "Manufacturer" VARCHAR(64),
     "Model" VARCHAR(64),
     "HardwareVersion" VARCHAR(64),
@@ -564,29 +480,6 @@ CREATE TABLE "FirmwareCompatibility" (
     "TestedAt" TIMESTAMP WITH TIME ZONE,
     "IsDeleted" BOOLEAN DEFAULT FALSE,
     "IsSystem" BOOLEAN DEFAULT FALSE,
-    "CreatedAt" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    "UpdatedAt" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY ("FirmwareControlId") REFERENCES "FirmwareControl"("FirmwareControlId") ON DELETE CASCADE,
     FOREIGN KEY ("TestedBy") REFERENCES "Users"("UserId") ON DELETE SET NULL
-);
-
--- Add firmware version tracking to existing tables
-ALTER TABLE "Devices" ADD COLUMN "CurrentFirmwareVersion" VARCHAR(64);
-ALTER TABLE "Devices" ADD COLUMN "CurrentFirmwareControlId" VARCHAR(64);
-ALTER TABLE "Devices" ADD COLUMN "LastFirmwareUpdateAt" TIMESTAMP WITH TIME ZONE;
-ALTER TABLE "Assets" ADD COLUMN "CurrentFirmwareVersion" VARCHAR(64);
-ALTER TABLE "Assets" ADD COLUMN "CurrentFirmwareControlId" VARCHAR(64);
-ALTER TABLE "Assets" ADD COLUMN "LastFirmwareUpdateAt" TIMESTAMP WITH TIME ZONE;
-
-CREATE TABLE "Countries" (
-    "CountryId" VARCHAR(8) PRIMARY KEY, -- ISO 3166-1 alpha-3
-    "CountryName" VARCHAR(64) NOT NULL,
-    "Capital" VARCHAR(64),
-    "IsoCode2" VARCHAR(2), -- ISO 3166-1 alpha-2
-    "IsoCode3" VARCHAR(3), -- ISO 3166-1 alpha-3
-    "IsdCode" VARCHAR(8),
-    "Currency" VARCHAR(8),
-    "GeoClusters" VARCHAR(256), -- 'APAC;ASEAN' or 'EMEA;EU;BENELUX'
-    "IsDeleted" BOOLEAN DEFAULT FALSE,
-    "IsSystem" BOOLEAN DEFAULT TRUE
 );
